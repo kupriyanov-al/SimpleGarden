@@ -1,0 +1,110 @@
+:root {
+    --bg-color: #f5f5f5;
+    --text-color: #6c757d;
+    --accent-color: #ffd333;
+    --contrast-color: #3d464d;
+    
+    --title-color: rgb(4, 107, 107);
+}
+
+
+
+html, body {
+    height: 100%;
+    
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+body {
+    min-width: 320px;
+    font-family: 'Roboto', sans-serif;
+    
+}
+
+a {
+    color: var(--text-color);
+    text-decoration: underline;
+}
+
+.wrapper {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.title-icon {
+ margin-right: 10px;
+}
+
+.header-top a{
+    color: rgb(4, 107, 107);
+}
+
+.main {
+    flex: 1 1 auto;
+}
+
+
+/* --------------header--------------- */
+
+.baner {
+    position: relative;
+}
+
+.baner-title {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto; 
+    top: 100px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 54px;
+    color: cadetblue;
+    
+}
+
+.title {
+    color: var(--title-color);
+}
+
+
+/* --------------Nav--------------- */
+
+.navbar-light .navbar-nav .nav-link {
+    color: var(--title-color)
+}
+
+.active {
+    background-color: #6c757d ! important;
+}
+
+/* --------------Main--------------- */
+
+
+.monitoring {
+    border-right: #d1d6da 1px solid;
+}
+
+.mnu-trends {
+    border: #d1d6da 1px solid;
+}
+
+.card-title {
+    color: var(--text-color);
+    font-size: 24px;
+}
+
+.card-header {
+    color: var(--text-color);
+    
+}
+
+.subtitle {
+    font-size: 18px;
+    color: #d1d6da ;
+}
