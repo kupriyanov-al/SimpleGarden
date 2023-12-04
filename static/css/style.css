@@ -41,7 +41,8 @@ a {
 }
 
 .header-top a{
-    color: rgb(4, 107, 107);
+   
+    color: var(--title-color);
 }
 
 .main {
