@@ -10,7 +10,7 @@ broker = 'test.mosquitto.org'
 port = 1883
 topic = "rasp"
 # generate client ID with pub prefix randomly
-client_id = f'python-mqtt-{random.randint(0, 100)}'
+#client_id = f'python-mqtt-{random.randint(0, 100)}'
 
 
 
@@ -21,7 +21,7 @@ def connect_mqtt() -> mqtt_client:
         else:
             print("Failed to connect, return code %d\n", rc)
 
-    client = mqtt_client.Client(client_id)
+    client = mqtt_client.Client()
     client.on_connect = on_connect
     client.connect(broker, port)
     return client
@@ -36,7 +36,7 @@ def publish(client):
         # msg = f"messages: {msg_count}"
         now = datetime.datetime.now()
         msg = {"datastamp": now.strftime(
-            '%d.%m.%Y %H:%M:%S'),  "temperatura": random.randint(20, 35), "humidity": 555, "CoolState": True, "ReleState": False}
+            '%d.%m.%Y %H:%M:%S'),  "temperatura": random.randint(20, 35), "humidity": 100, "CoolState": True, "ReleState": False}
         
         msg = json.dumps(msg)
         result = client.publish(topic, msg)
