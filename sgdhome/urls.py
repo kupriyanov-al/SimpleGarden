@@ -16,10 +16,11 @@ Including another URLconf
 """
 
 from django.urls import path
-from .views import HomePageViews
+from .views import HomePageViews, DBTelemetryListView
 
 urlpatterns = [
     
     path('', HomePageViews.as_view(), name='home'),
+    path('db/', DBTelemetryListView.as_view(), name=None)
     
 ]
