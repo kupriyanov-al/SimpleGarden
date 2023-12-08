@@ -17,6 +17,17 @@ client.onMessageArrived = onMessageArrived;
 // connect the client
 client.connect({onSuccess:onConnect});
 
+fetch('http://127.0.0.1:8000/home/db/')
+  .then(response => response.json())
+  .then(data => showdata(data));  
+
+function showdata(data) {
+  for (let r of data) {
+    console.log(r.temperatura)
+  }
+  
+}
+
 
 // called when the client connects
 function onConnect() {
@@ -58,7 +69,10 @@ function onMessageArrived(message) {
     document.getElementById("releState").innerHTML = releState;
     document.getElementById("datastamp").innerHTML = datastamp;
     
-    
+  
+
+// Тренды
+
     myChart.data.labels.push(datastamp);
     myChart.data.datasets[0].data.push(temperatura);
     
