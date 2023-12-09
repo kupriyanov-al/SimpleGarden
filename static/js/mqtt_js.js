@@ -7,7 +7,7 @@ let humidity = 0;
 let datastamp="";
 
 //client = new Paho.MQTT.Client("mqtt.hostname.com", Number(8080), "", "clientId");
-client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"","clientId")
+client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),"","clientId")
 //client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(1883),"","clientId")
 
 // set callback handlers
@@ -24,6 +24,15 @@ fetch('http://127.0.0.1:8000/home/db/')
 function showdata(data) {
   for (let r of data) {
     console.log(r.temperatura)
+    myChart.data.labels.push(r.datastamp);
+    myChart.data.datasets[0].data.push(r.temperatura);
+    
+    console.log(myChart.data.datasets[0].data.length) 
+    if (myChart.data.datasets[0].data.length > 50) {
+      myChart.data.labels.shift();
+      myChart.data.datasets[0].data.shift();
+    }
+    myChart.update();
   }
   
 }
@@ -72,6 +81,7 @@ function onMessageArrived(message) {
   
 
 // Тренды
+    // showdata(mes)
 
     myChart.data.labels.push(datastamp);
     myChart.data.datasets[0].data.push(temperatura);
