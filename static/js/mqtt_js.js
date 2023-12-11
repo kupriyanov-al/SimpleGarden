@@ -7,7 +7,7 @@ let humidity = 0;
 let datastamp="";
 
 //client = new Paho.MQTT.Client("mqtt.hostname.com", Number(8080), "", "clientId");
-client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),"","clientId")
+client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"","clientId")
 //client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(1883),"","clientId")
 
 // set callback handlers
@@ -23,7 +23,7 @@ fetch('http://127.0.0.1:8000/home/db/')
 
 function showdata(data) {
   for (let r of data) {
-    console.log(r.temperatura)
+    console.log(r)
     myChart.data.labels.push(r.datastamp);
     myChart.data.datasets[0].data.push(r.temperatura);
     
@@ -58,7 +58,7 @@ function onMessageArrived(message) {
     //console.log("onMessageArrived:"+message.payloadString);
     var result = message.destinationName + " : " + message.payloadString + "";
     mes = JSON.parse(message.payloadString);
-    console.log(mes)
+    //console.log(mes)
     
     temperatura = mes['temperatura'];
     humidity = mes['humidity'];
@@ -78,20 +78,21 @@ function onMessageArrived(message) {
     document.getElementById("releState").innerHTML = releState;
     document.getElementById("datastamp").innerHTML = datastamp;
     
-  
-
+    let data=[];
+    data.push(mes) 
 // Тренды
-    // showdata(mes)
-
-    myChart.data.labels.push(datastamp);
-    myChart.data.datasets[0].data.push(temperatura);
+    console.log(data)
+    showdata(data)
+  
+    // myChart.data.labels.push(datastamp);
+    // myChart.data.datasets[0].data.push(temperatura);
     
-    console.log(myChart.data.datasets[0].data.length) 
-    if (myChart.data.datasets[0].data.length > 50) {
-      myChart.data.labels.shift();
-      myChart.data.datasets[0].data.shift();
-    }
-    myChart.update();
+    // console.log(myChart.data.datasets[0].data.length) 
+    // if (myChart.data.datasets[0].data.length > 50) {
+    //   myChart.data.labels.shift();
+    //   myChart.data.datasets[0].data.shift();
+    // }
+    // myChart.update();
 }
 
 var ctx = document.getElementById('myChart').getContext('2d');
