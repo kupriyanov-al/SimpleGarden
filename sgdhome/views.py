@@ -20,11 +20,12 @@ class DBTelemetryListView(generics.ListAPIView):
     # queryset = DBTelemetry.objects.all()[:10]
     serializer_class = serializers.DBTelemetrySerializer
 
-    def get_queryset(self):
+    def get_queryset(self, *args):
         # выводим из БД данные за сутки
         startDate = datetime.datetime.now() - datetime.timedelta(days=1)
         endDate = datetime.datetime.now()
-      
+        # ds = self.request.GET.get('pk')
+        ds =  args.get('pk', None)
         return DBTelemetry.objects.filter(datastamp__range=[startDate, endDate])
 
 # запуск mqtt

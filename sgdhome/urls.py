@@ -20,7 +20,8 @@ from .views import HomePageViews, DBTelemetryListView
 
 urlpatterns = [
     
-    path('', HomePageViews.as_view(), name='home'),
+    # path('', HomePageViews.as_view(), name='home'),
+    path('<int:pk>/', HomePageViews.as_view(), name='arhive'),
     path('db/', DBTelemetryListView.as_view(), name=None)
     
 ]

@@ -7,7 +7,7 @@ let humidity = 0;
 let datastamp="";
 
 //client = new Paho.MQTT.Client("mqtt.hostname.com", Number(8080), "", "clientId");
-client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"","clientId")
+client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),"","clientId")
 //client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(1883),"","clientId")
 
 // set callback handlers
