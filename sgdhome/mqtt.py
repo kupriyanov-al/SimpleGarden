@@ -15,7 +15,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, message):
    rec = json.loads(str(message.payload.decode()))
   
-   # функция записи в БД
+   # функция записи в БД в модуле procDB
    recdb(rec['datastamp'], rec['temperatura'],
          rec['humidity'], rec['CoolState'], rec['ReleState'])
    print(rec)

@@ -6,8 +6,12 @@ let temperatura = 0;
 let humidity = 0;
 let datastamp="";
 
+var btnQuery = document.getElementById('btnQuery');
+var myCheckbox = document.getElementById('myCheckbox');
+myCheckbox.checked = true;
+
 //client = new Paho.MQTT.Client("mqtt.hostname.com", Number(8080), "", "clientId");
-client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),"","clientId")
+client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"","clientId")
 //client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(1883),"","clientId")
 
 // set callback handlers
@@ -17,9 +21,38 @@ client.onMessageArrived = onMessageArrived;
 // connect the client
 client.connect({onSuccess:onConnect});
 
-fetch('http://127.0.0.1:8000/home/db/')
-  .then(response => response.json())
-  .then(data => showdata(data));  
+
+function fetchMonitoring() {
+  fetch('http://127.0.0.1:8000/home/db/')
+    .then(response => response.json())
+    .then(data => showdata(data));
+}
+
+if (myCheckbox.checked) {
+  fetchMonitoring();
+}
+
+myCheckbox.addEventListener('change', function(){
+  if (myCheckbox.checked) {
+    fetchMonitoring(); 
+    btnQuery.setAttribute('disabled', true);
+  } else {
+    btnQuery.removeAttribute('disabled');
+  }
+})
+
+
+
+
+//вешаем на него событие
+btnQuery.onclick = function () {
+  //производим  действия
+  fetch('http://127.0.0.1:8000/home/06.12.2023/07.12.2023')
+    .then(response => response.json())
+    .then(data => showdata(data));
+}
+
+
 
 function showdata(data) {
   for (let r of data) {
@@ -82,7 +115,11 @@ function onMessageArrived(message) {
     data.push(mes) 
 // Тренды
     console.log(data)
-    showdata(data)
+
+    if (myCheckbox.checked) {
+      showdata(data)
+    }
+    
   
     // myChart.data.labels.push(datastamp);
     // myChart.data.datasets[0].data.push(temperatura);

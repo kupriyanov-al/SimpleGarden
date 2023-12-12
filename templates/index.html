@@ -54,6 +54,8 @@
                 <div class="h4 pb-2 mb-4 text-primary-emphasis border-bottom border-primary-emphasis mt-3  d-flex justify-content-between align-items-center ">
                     <div class="title">
                         <i class="bi bi-speedometer mr-2"></i> <span >Мониторинг</span>
+                        
+                        <a id="switch" href="#">On</a>
                     </div>
                     
                     <div class="subtitle align-bottom" id="datastamp">00.00.000</div>
@@ -95,14 +97,16 @@
                                 <nav class="navbar bg-body-tertiary">
                                     <div class="container-fluid ">
                                         <a class="navbar-brand ">Trends</a>
-                                        <form class="d-flex" role="search">
+                                        <input type="checkbox" id="myCheckbox" />
+                                        
+                                        <div class="d-flex" role="search">
                                             <input class="form-control me-2" type="date" data-date-format="dd.mm.YYYY" placeholder="Search" aria-label="Search">
-                                            <button class="btn btn-outline-secondary me-2" type="submit">Search</button>
-                                            
+                                            {% comment %} <button class="btn btn-outline-secondary me-2" type="submit" id="submit">Search</button> {% endcomment %}
+                                            <button class="btn btn-outline-secondary me-2" id="btnQuery" disabled = 'true'>Search</button>
                                             <button class="btn btn-outline-secondary me-2" type="submit"><i class="bi bi-filetype-xls" ></i></button>
                                             <button class="btn btn-outline-secondary me-2 " data-bs-toggle="modal" data-bs-target="#staticBackdrop" type="button"><i class="bi bi-table"
                                                     ></i></button>
-                                        </form>
+                                            </div>
                                        
                                        
                                     </div>
@@ -147,8 +151,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
-    {% comment %} <script src="/mqttjs.js"></Script>
-    <script src="assets/js/main.js"></script> {% endcomment %}
+    {% comment %} <script src="/mqttjs.js"></Script>{% endcomment %}
+    <script src="{% static 'js/main.js'%}"></script> 
     <script src="{% static 'js/mqtt_js.js'%}"></script>
 </body>
 
