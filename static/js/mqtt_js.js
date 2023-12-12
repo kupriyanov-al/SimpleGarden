@@ -10,6 +10,8 @@ var btnQuery = document.getElementById('btnQuery');
 var myCheckbox = document.getElementById('myCheckbox');
 myCheckbox.checked = true;
 
+
+
 //client = new Paho.MQTT.Client("mqtt.hostname.com", Number(8080), "", "clientId");
 client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"","clientId")
 //client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(1883),"","clientId")
@@ -41,13 +43,26 @@ myCheckbox.addEventListener('change', function(){
   }
 })
 
+// const url = new URL('http://myapi.com/orders');
+// url.searchParams.set('order_id', '1');
+// fetch(url);
 
-
+function formatdate(str){
+  
+  const [year, month, day] = str.split('-');
+  var rez = `${day}.${month}.${year}`;
+  return rez
+}
 
 //вешаем на него событие
 btnQuery.onclick = function () {
+  var datest = formatdate(document.getElementById('datest').value) ;
+  var datend = formatdate(document.getElementById('datend').value) ;
+  console.log(datest);
+  // var datend = document.getElementById('datend'); 
   //производим  действия
-  fetch('http://127.0.0.1:8000/home/06.12.2023/07.12.2023')
+  fetch('http://127.0.0.1:8000/home/'+datest+'/'+datend+'')
+  // fetch('http://127.0.0.1:8000/home/01.11.2023/09.12.2023')
     .then(response => response.json())
     .then(data => showdata(data));
 }

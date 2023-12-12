@@ -100,7 +100,9 @@
                                         <input type="checkbox" id="myCheckbox" />
                                         
                                         <div class="d-flex" role="search">
-                                            <input class="form-control me-2" type="date" data-date-format="dd.mm.YYYY" placeholder="Search" aria-label="Search">
+                                            <input class="form-control me-2" type="date" data-date-format="dd.mm.YYYY" id="datest" placeholder="Search" aria-label="Search" required pattern="\d{2}.\d{2}.\d{4}" >
+                                            <input class="form-control me-2" type="date" data-date-format="dd.mm.YYYY" id="datend" placeholder="Search" aria-label="Search">
+                                           
                                             {% comment %} <button class="btn btn-outline-secondary me-2" type="submit" id="submit">Search</button> {% endcomment %}
                                             <button class="btn btn-outline-secondary me-2" id="btnQuery" disabled = 'true'>Search</button>
                                             <button class="btn btn-outline-secondary me-2" type="submit"><i class="bi bi-filetype-xls" ></i></button>
