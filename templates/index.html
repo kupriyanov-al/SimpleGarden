@@ -97,18 +97,22 @@
                                 <nav class="navbar bg-body-tertiary">
                                     <div class="container-fluid ">
                                         <a class="navbar-brand ">Trends</a>
-                                        <input type="checkbox" id="myCheckbox" />
-                                        
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" id="myCheckbox" checked>
+                                            <label class="form-check-label text-secondary" for="myCheckbox">Мониторинг </label>
+                                        </div>
+                                       
                                         <div class="d-flex" role="search">
-                                            <input class="form-control me-2" type="date" data-date-format="dd.mm.YYYY" id="datest" placeholder="Search" aria-label="Search" >
-                                            <input class="form-control me-2" type="date" data-date-format="dd.mm.YYYY" id="datend" placeholder="Search" aria-label="Search">
+                                            
+                                            <input class="form-control me-2" type="date"  id="datest" placeholder="Search" aria-label="Search" disabled = "true">
+                                            <input class="form-control me-2" type="date"  id="datend" placeholder="Search" aria-label="Search" disabled = "true">
                                            
                                             {% comment %} <button class="btn btn-outline-secondary me-2" type="submit" id="submit">Search</button> {% endcomment %}
                                             <button class="btn btn-outline-secondary me-2" id="btnQuery" disabled = 'true'>Search</button>
                                             <button class="btn btn-outline-secondary me-2" type="submit"><i class="bi bi-filetype-xls" ></i></button>
                                             <button class="btn btn-outline-secondary me-2 " data-bs-toggle="modal" data-bs-target="#staticBackdrop" type="button"><i class="bi bi-table"
                                                     ></i></button>
-                                            </div>
+                                        </div>
                                        
                                        
                                     </div>
