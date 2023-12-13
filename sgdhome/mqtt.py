@@ -17,7 +17,7 @@ def on_message(client, userdata, message):
   
    # функция записи в БД в модуле procDB
    recdb(rec['datastamp'], rec['temperatura'],
-         rec['humidity'], rec['CoolState'], rec['ReleState'])
+         rec['humidity'], rec['coolState'], rec['releState'])
    print(rec)
    
 
