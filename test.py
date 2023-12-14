@@ -11,7 +11,7 @@ port = 1883
 topic = "rasp"
 # generate client ID with pub prefix randomly
 #client_id = f'python-mqtt-{random.randint(0, 100)}'
-
+val={}
 
 
 def connect_mqtt() -> mqtt_client:
@@ -30,14 +30,23 @@ def connect_mqtt() -> mqtt_client:
 def publish(client):
     msg_count = 0
     
-    
+    def sendfull(mes):
+        global val
+        now = datetime.datetime.now()
+        if val!=mes:
+          mes["datastamp"]= now.strftime('%d.%m.%Y %H:%M:%S')
+        val=mes.copy()
+          
+        return mes
+       
     while True:
         time.sleep(10)
         # msg = f"messages: {msg_count}"
-        now = datetime.datetime.now()
-        msg = {"datastamp": now.strftime(
-            '%d.%m.%Y %H:%M:%S'),  "temperatura": random.randint(20, 35), "humidity": 100, "coolState": True, "releState": False}
+        # now = datetime.datetime.now()
+        msg = {"temperatura": random.randint(20, 35), "humidity": 100, "coolState": True, "releState": False}
         
+        msg = sendfull(msg)
+        # print(mes)
         msg = json.dumps(msg)
         result = client.publish(topic, msg)
         # result: [0, 1]
