@@ -36,7 +36,7 @@ def publish(client):
         # msg = f"messages: {msg_count}"
         now = datetime.datetime.now()
         msg = {"datastamp": now.strftime(
-            '%d.%m.%Y %H:%M:%S'),  "temperatura": random.randint(20, 35), "humidity": 100, "CoolState": True, "ReleState": False}
+            '%d.%m.%Y %H:%M:%S'),  "temperatura": random.randint(20, 35), "humidity": 100, "coolState": True, "releState": False}
         
         msg = json.dumps(msg)
         result = client.publish(topic, msg)

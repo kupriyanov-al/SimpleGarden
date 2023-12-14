@@ -22,8 +22,9 @@ document.getElementById('datest').value = datest;
 document.getElementById('datend').value = datend;
 
 
+
 //client = new Paho.MQTT.Client("mqtt.hostname.com", Number(8080), "", "clientId");
-client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"","clientId")
+client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),"","clientId")
 //client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(1883),"","clientId")
 
 // set callback handlers
@@ -37,15 +38,25 @@ client.connect({onSuccess:onConnect});
 function fetchMonitoring() {
   fetch('http://127.0.0.1:8000/home/db/')
     .then(response => response.json())
-    .then(data => showdata(data));
+    .then(data => showdata(data, true));   
+}
+
+function clearDataChart() {
+  myChart.data.labels = []
+  for (let i = 0; i < 3; i++) {
+    myChart.data.datasets[i].data = []
+  }
 }
 
 if (myCheckbox.checked) {
   fetchMonitoring();
+  
+ 
 }
 
 myCheckbox.addEventListener('change', function(){
   if (myCheckbox.checked) {
+    clearDataChart();
     fetchMonitoring(); 
     btnQuery.setAttribute('disabled', true);
     document.getElementById('datest').setAttribute('disabled', true);
@@ -69,37 +80,64 @@ function formatdate(str){
   return rez
 }
 
-//вешаем на него событие
+//вешаем на кнопку запроса событие
 btnQuery.onclick = function () {
   var datest = formatdate(document.getElementById('datest').value) ;
   var datend = formatdate(document.getElementById('datend').value) ;
-  console.log(datest);
+  // очистка данных графика
+  clearDataChart();
+  
   // var datend = document.getElementById('datend'); 
   //производим  действия
   fetch('http://127.0.0.1:8000/home/'+datest+'/'+datend+'')
   // fetch('http://127.0.0.1:8000/home/01.11.2023/09.12.2023')
     .then(response => response.json())
-    .then(data => showdata(data));
+    .then(data => showdata(data, false));
+    // 
+    
 }
 
 
 
-function showdata(data) {
+function showdata(data, prd) {
+  var temp = "";
   for (let r of data) {
-    console.log(r)
+    
     myChart.data.labels.push(r.datastamp);
     myChart.data.datasets[0].data.push(r.temperatura);
     myChart.data.datasets[1].data.push(r.humidity);
-    myChart.data.datasets[2].data.push(r.releState);
-    myChart.data.datasets[3].data.push(r.coolState);
+    myChart.data.datasets[2].data.push(r.coolState);
+    myChart.data.datasets[3].data.push(r.releState);
     
-
+    if (prd){
+          
     if (myChart.data.datasets[0].data.length > 50) {
       myChart.data.labels.shift();
-      myChart.data.datasets[0].data.shift();
+      for (let i = 0; i < 3; i++) { 
+        myChart.data.datasets[i].data.shift();
+       
+      }
     }
+      
+      
+  }
+    for (let i = 0; i < 3; i++) { // устанавливаем у графика шкалу
+      maxValue = Math.max.apply(null, myChart.data.datasets[i].data);
+      minValue = Math.min.apply(null, myChart.data.datasets[i].data);
+      myChart.options.scales.yAxes[i].ticks.max = maxValue + 0.1
+      myChart.options.scales.yAxes[i].ticks.min = minValue - 0.1
+    }
+    
+    temp += "<tr>";
+    temp += "<td>" + r.datastamp + "</td>";
+    temp += "<td>" + r.temperatura + "</td>";
+    temp += "<td>" + r.humidity + "</td>";
+    temp += "<td>" + r.coolState + "</td>";
+    temp += "<td>" + r.releState + "</td></tr>";
 
+    document.getElementById('data_tbl').innerHTML = temp;
     myChart.update();
+    
   }
   
 }
@@ -129,20 +167,20 @@ function onMessageArrived(message) {
     
     temperatura = mes['temperatura'];
     humidity = mes['humidity'];
-    coolState = mes['CoolState'];
-    releState = mes['ReleState'];
+    coolState = mes['coolState'];
+    releState = mes['releState'];
 
     datastamp = mes['datastamp'];
 
 
-    coolState=(coolState==true)?'ON':'OFF';
-    releState=(releState==true)?'ON':'OFF';
+    coolState_onoff=(coolState==true)?'ON':'OFF';
+    releState_onoff=(releState==true)?'ON':'OFF';
 
     // document.querySelector(".submsg").innerHTML = temperatura; 
     document.getElementById("temperature").innerHTML = temperatura; 
     document.getElementById("humidity").innerHTML = humidity;
-    document.getElementById("coolState").innerHTML = coolState;
-    document.getElementById("releState").innerHTML = releState;
+    document.getElementById("coolState").innerHTML = coolState_onoff;
+    document.getElementById("releState").innerHTML = releState_onoff;
     document.getElementById("datastamp").innerHTML = datastamp;
     
     let data=[];
@@ -151,7 +189,7 @@ function onMessageArrived(message) {
     console.log(data)
 
     if (myCheckbox.checked) {
-      showdata(data)
+      showdata(data, true)
     }
     
   
@@ -196,7 +234,7 @@ var myChart = new Chart(canvas, {
       {
         yAxisID: 'C',
         data: [],
-        stepped: true,
+        steppedLine: true,
         label: "Освещение",
         borderColor: "#fc1d42",
         backgroundColor: "#71d1bd",
@@ -208,7 +246,7 @@ var myChart = new Chart(canvas, {
       {
         yAxisID: 'D',
         data: [],
-        stepped: true,
+        steppedLine: true,
         label: "Вентилятор",
         borderColor: "#0eec51",
         backgroundColor: "#71d1bd",
@@ -219,6 +257,10 @@ var myChart = new Chart(canvas, {
   ]
   },
   options: {
+    title: {
+          display: true,
+          text: 'Тренды'
+    },
     scales: {
       xAxes: [{
         display: true,
@@ -228,7 +270,8 @@ var myChart = new Chart(canvas, {
         },
         ticks: {
           autoSkip: true,
-          maxTicksLimit: 20,
+          
+          //maxTicksLimit: 20,
           // max:3,
           // min:3,
 
@@ -239,15 +282,16 @@ var myChart = new Chart(canvas, {
         
         scaleLabel: {
                   display: true,
-                  labelString: 'Temperature'
+                  labelString: 'Температура'
                 },
         id: 'A',
         type: 'linear',
         position: 'left',
         
         ticks: {
-          max: 50,
-          min: 0
+          // max: scales.y.max,
+          // min: 18,
+          
         }
       },
       {
@@ -271,7 +315,8 @@ var myChart = new Chart(canvas, {
         // position: 'left',
         ticks: {
           max: 2,
-          min: 0
+          min: 0,
+          beginAtZero: true
         } 
       },
       {
@@ -280,7 +325,8 @@ var myChart = new Chart(canvas, {
         display: false,
         ticks: {
           max: 2,
-          min: 0
+          min: 0,
+          beginAtZero: true
         },
         stepped: true,
       }
