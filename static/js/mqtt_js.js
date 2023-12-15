@@ -9,7 +9,7 @@ let datastamp="";
 var btnQuery = document.getElementById('btnQuery');
 var myCheckbox = document.getElementById('myCheckbox');
 myCheckbox.checked = true;
-
+var temp = "";
 
 // выставляем дату текущую и текущую-1
 var date = new Date();
@@ -24,7 +24,7 @@ document.getElementById('datend').value = datend;
 
 
 //client = new Paho.MQTT.Client("mqtt.hostname.com", Number(8080), "", "clientId");
-client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),"","clientId")
+client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"","clientId")
 //client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(1883),"","clientId")
 
 // set callback handlers
@@ -38,7 +38,8 @@ client.connect({onSuccess:onConnect});
 function fetchMonitoring() {
   fetch('http://127.0.0.1:8000/home/db/')
     .then(response => response.json())
-    .then(data => showdata(data, true));   
+    .then(data => showdata(data, true));
+    temp=""   
 }
 
 function clearDataChart() {
@@ -50,8 +51,6 @@ function clearDataChart() {
 
 if (myCheckbox.checked) {
   fetchMonitoring();
-  
- 
 }
 
 myCheckbox.addEventListener('change', function(){
@@ -84,6 +83,7 @@ function formatdate(str){
 btnQuery.onclick = function () {
   var datest = formatdate(document.getElementById('datest').value) ;
   var datend = formatdate(document.getElementById('datend').value) ;
+  temp = ""
   // очистка данных графика
   clearDataChart();
   
@@ -100,7 +100,7 @@ btnQuery.onclick = function () {
 
 
 function showdata(data, prd) {
-  var temp = "";
+  
   for (let r of data) {
     
     myChart.data.labels.push(r.datastamp);
@@ -109,25 +109,8 @@ function showdata(data, prd) {
     myChart.data.datasets[2].data.push(r.coolState);
     myChart.data.datasets[3].data.push(r.releState);
     
-    if (prd){
-          
-    if (myChart.data.datasets[0].data.length > 50) {
-      myChart.data.labels.shift();
-      for (let i = 0; i < 3; i++) { 
-        myChart.data.datasets[i].data.shift();
-       
-      }
-    }
-      
-      
-  }
-    for (let i = 0; i < 3; i++) { // устанавливаем у графика шкалу
-      maxValue = Math.max.apply(null, myChart.data.datasets[i].data);
-      minValue = Math.min.apply(null, myChart.data.datasets[i].data);
-      myChart.options.scales.yAxes[i].ticks.max = maxValue + 0.1
-      myChart.options.scales.yAxes[i].ticks.min = minValue - 0.1
-    }
-    
+   
+
     temp += "<tr>";
     temp += "<td>" + r.datastamp + "</td>";
     temp += "<td>" + r.temperatura + "</td>";
@@ -136,6 +119,26 @@ function showdata(data, prd) {
     temp += "<td>" + r.releState + "</td></tr>";
 
     document.getElementById('data_tbl').innerHTML = temp;
+
+    if (prd){ 
+       
+      if (myChart.data.datasets[0].data.length > 100) {
+        myChart.data.labels.shift();
+        for (let i = 0; i < 3; i++) { 
+          myChart.data.datasets[i].data.shift();
+        
+        }
+      }
+    
+  }
+    for (let i = 0; i < 3; i++) { // устанавливаем у графика шкалу
+      maxValue = Math.max.apply(null, myChart.data.datasets[i].data);
+      minValue = Math.min.apply(null, myChart.data.datasets[i].data);
+      myChart.options.scales.yAxes[i].ticks.max = maxValue + 0.1
+      myChart.options.scales.yAxes[i].ticks.min = minValue - 0.1
+    }
+    
+   
     myChart.update();
     
   }

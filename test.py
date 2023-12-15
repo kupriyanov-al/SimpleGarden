@@ -26,28 +26,46 @@ def connect_mqtt() -> mqtt_client:
     client.connect(broker, port)
     return client
 
+# сравнение двух сообщений для исключения отправки данных без изменений
+
+
+def compare_dict(dect, dect_old):
+    # if msg is None or dict_msg is None:
+    if dect == dect_old:
+        return True
+    return False
 
 def publish(client):
     msg_count = 0
+    mes_old={} 
     
     
     while True:
         time.sleep(10)
         # msg = f"messages: {msg_count}"
-        now = datetime.datetime.now()
-        msg = {"datastamp": now.strftime(
-            '%d.%m.%Y %H:%M:%S'),  "temperatura": random.randint(20, 35), "humidity": 100, "coolState": True, "releState": False}
+        # now = datetime.datetime.now()
+        msg = {"temperatura": random.randint(20, 35), "humidity": 50, "coolState": True, "releState": False}
+        # msg = {"temperatura": 50, "humidity": 100, "coolState": True, "releState": False}
         
-        msg = json.dumps(msg)
-        result = client.publish(topic, msg)
-        # result: [0, 1]
-        status = result[0]
-        if status == 0:
-            print(f"Send `{msg}` to topic `{topic}`")
-        else:
-            print(f"Failed to send message to topic {topic}")
+        # msg = sendfull(msg)
+        # print(mes)
         
-   
+        if not compare_dict(msg, mes_old):
+            mes_old = msg.copy()
+           
+            
+            now = datetime.datetime.now()
+            msg["datastamp"] = now.strftime('%d.%m.%Y %H:%M:%S')
+            msg = json.dumps(msg)
+            result = client.publish(topic, msg)
+       
+            status = result[0]
+            if status == 0:
+                print(f"Send `{msg}` to topic `{topic}`")
+            else:
+                print(f"Failed to send message to topic {topic}")
+        
+       
    
 
 
