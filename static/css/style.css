@@ -98,11 +98,12 @@ a {
 .card-title {
     color: var(--text-color);
     font-size: 24px;
+    /* color: red;  */
 }
 
 .card-header {
     color: var(--text-color);
-    
+    /* color: red;  */
 }
 
 .subtitle {
@@ -111,6 +112,18 @@ a {
    
 }
 
+
+
+@media (max-width: 992px)  { 
+    .card{
+       margin-right: 5px;
+       
+    }
+    .card-header {
+        font-size: small;
+    }
+}
+/* footer--------------- */
 .footer-title {
     margin-top: 40px;
     padding: 10px;
