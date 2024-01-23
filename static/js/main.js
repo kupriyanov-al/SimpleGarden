@@ -7,7 +7,18 @@ window.onload = function () {
         
         var ws = file.Sheets[file.SheetNames[0]];
         ws["!cols"] = [{ wpx: 150 }, { wpx: 80 }, { wpx: 80 }, { wpx: 80}, { wpx: 80 }];
-
+        ws["!cols"].s = {
+            font: {
+                bold: true,
+                color: "000000",
+                sz: '11'
+            },
+            fill: {
+                type: 'pattern',
+                patternType: 'solid',
+                fgColor: { rgb: "e8f0f8" }
+            }
+        }
         XLSX.write(file, { bookType: type, bookSST: true, type: 'base64' });
 
         XLSX.writeFile(file, 'file.' + type);

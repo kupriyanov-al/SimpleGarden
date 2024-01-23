@@ -102,15 +102,9 @@ btnQuery.onclick = function () {
 function showdata(data, prd) {
   
   for (let r of data) {
-    
-    myChart.data.labels.push(r.datastamp);
-    myChart.data.datasets[0].data.push(r.temperatura);
-    myChart.data.datasets[1].data.push(r.humidity);
-    myChart.data.datasets[2].data.push(r.coolState);
-    myChart.data.datasets[3].data.push(r.releState);
-    
-   
 
+
+    // заполняем таблицу данными
     temp += "<tr>";
     temp += "<td>" + r.datastamp + "</td>";
     temp += "<td>" + r.temperatura + "</td>";
@@ -120,8 +114,15 @@ function showdata(data, prd) {
 
     document.getElementById('data_tbl').innerHTML = temp;
 
-    if (prd){ 
-       
+    // заполняем график данными
+    myChart.data.labels.push(r.datastamp);
+    myChart.data.datasets[0].data.push(r.temperatura);
+    myChart.data.datasets[1].data.push(r.humidity);
+    myChart.data.datasets[2].data.push(r.coolState);
+    myChart.data.datasets[3].data.push(r.releState);
+    
+    // если в режиме мониторинга то удаляем из графика данные больше 100
+    if (prd){    
       if (myChart.data.datasets[0].data.length > 100) {
         myChart.data.labels.shift();
         for (let i = 0; i < 3; i++) { 
