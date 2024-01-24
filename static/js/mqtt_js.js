@@ -22,10 +22,12 @@ document.getElementById('datest').value = datest;
 document.getElementById('datend').value = datend;
 
 
-
-//client = new Paho.MQTT.Client("mqtt.hostname.com", Number(8080), "", "clientId");
-client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"","clientId")
+//client = new Paho.MQTT.Client("mqtt.hostname.com", Number(9001), "", "clientId");
+client = new Paho.MQTT.Client("test.mosquitto.org", Number(8080), "", "clientId");
+//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"","clientId")
 //client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(1883),"","clientId")
+//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8091),"","clientId")
+//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8090),"","clientId")
 
 // set callback handlers
 client.onConnectionLost = onConnectionLost;
