@@ -73,9 +73,7 @@ myCheckbox.addEventListener('change', function(){
 // const url = new URL('http://myapi.com/orders');
 // url.searchParams.set('order_id', '1');
 // fetch(url);
-// const url = new URL('http://myapi.com/orders');
-// url.searchParams.set('order_id', '1');
-// fetch(url);
+
 
 function formatdate(str){
   
