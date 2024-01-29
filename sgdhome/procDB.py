@@ -8,4 +8,5 @@ def recdb(datastamp, temperatura, humidity, coolState, releState):
                          humidity=humidity,
                          coolState=coolState,
                          releState=releState)
+  
   recordDB.save()

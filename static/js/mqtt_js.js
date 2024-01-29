@@ -242,7 +242,7 @@ var myChart = new Chart(canvas, {
         yAxisID: 'C',
         data: [],
         steppedLine: true,
-        label: "Освещение",
+        label: "Вентилятор",
         borderColor: "#fc1d42",
         backgroundColor: "#71d1bd",
         fill: false,
@@ -254,7 +254,7 @@ var myChart = new Chart(canvas, {
         yAxisID: 'D',
         data: [],
         steppedLine: true,
-        label: "Вентилятор",
+        label: "Освещение",
         borderColor: "#0eec51",
         backgroundColor: "#71d1bd",
         fill: false,
@@ -293,7 +293,7 @@ var myChart = new Chart(canvas, {
                 },
         id: 'A',
         type: 'linear',
-        position: 'left',
+        position: 'right',
         
         ticks: {
           // max: scales.y.max,
