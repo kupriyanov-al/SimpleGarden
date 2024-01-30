@@ -29,7 +29,8 @@ window.onload = function () {
     btnExl.onclick = function () {
         html_table_to_excel('xlsx')
     }
-        
+    
+
 }
     
 

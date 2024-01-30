@@ -152,10 +152,10 @@ a {
         display: block;
     }
 
-        canvas {
+    /* canvas {
             
-            height: 500px !important;
-        }
+        height: 500px !important;
+    } */
     .modal-content {
         font-size: 10px ! important;
     }

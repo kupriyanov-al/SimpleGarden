@@ -8,6 +8,9 @@ let datastamp="";
 
 var btnQuery = document.getElementById('btnQuery');
 var myCheckbox = document.getElementById('myCheckbox');
+var reset_zoom = document.getElementById('reset_zoom');
+
+
 myCheckbox.checked = true;
 var temp = "";
 
@@ -38,7 +41,7 @@ client.connect({onSuccess:onConnect});
 
 
 function fetchMonitoring() {
-  fetch('http://127.0.0.1:8000/home/db/')
+  fetch(document.URL+'/home/db/')
     .then(response => response.json())
     .then(data => showdata(data, true));
     temp=""   
@@ -82,6 +85,12 @@ function formatdate(str){
   return rez
 }
 
+
+
+reset_zoom.onclick =function() {
+  myChart.resetZoom();
+}
+
 //вешаем на кнопку запроса событие
 btnQuery.onclick = function () {
   var datest = formatdate(document.getElementById('datest').value) ;
@@ -92,7 +101,7 @@ btnQuery.onclick = function () {
   
   // var datend = document.getElementById('datend'); 
   //производим  действия
-  fetch('http://127.0.0.1:8000/home/'+datest+'/'+datend+'')
+  fetch(document.URL + '/home/'+datest+'/'+datend+'')
   // fetch('http://127.0.0.1:8000/home/01.11.2023/09.12.2023')
     .then(response => response.json())
     .then(data => showdata(data, false));
@@ -212,6 +221,9 @@ function onMessageArrived(message) {
 }
 
 var canvas = document.getElementById('myChart');
+
+
+
 var myChart = new Chart(canvas, {
   type: 'line',
   data: {
@@ -264,10 +276,40 @@ var myChart = new Chart(canvas, {
   ]
   },
   options: {
+    "responsive": true,
+    "maintainAspectRatio": false,
+    tooltip: false,
+    
+    
     title: {
           display: true,
           text: 'Тренды'
     },
+
+   
+      pan: {
+        enabled: false,
+        mode: 'y',
+        modifierKey: 'ctrl',
+      },
+
+      zoom: {
+        enabled: true,
+        mode: 'xy',
+        drag: {
+          enabled: true
+        },
+       
+      },
+
+  
+   
+   
+      
+ 
+    
+    
+
     scales: {
       xAxes: [{
         display: true,
@@ -280,10 +322,11 @@ var myChart = new Chart(canvas, {
           
           //maxTicksLimit: 20,
           // max:3,
-          // min:3,
-
-          
+          // min:3,        
         }
+
+      
+        
       }],
       yAxes: [{
         
@@ -297,9 +340,13 @@ var myChart = new Chart(canvas, {
         
         ticks: {
           // max: scales.y.max,
-          // min: 18,
-          
-        }
+          // min: 18,       
+        },
+        type: 'linear',
+        ticks: {
+          callback: (val, index, ticks) => index === 0 || index === ticks.length - 1 ? null : val,
+        },
+
       },
       {
 
@@ -338,9 +385,14 @@ var myChart = new Chart(canvas, {
         stepped: true,
       }
     ]
-    }
+    },
+   
   }
-});
+}
+
+);
+
+
 
 // var ctx = document.getElementById('myChart').getContext('2d');
 // var myChart = new Chart(ctx, {
