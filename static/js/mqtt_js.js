@@ -26,8 +26,8 @@ document.getElementById('datend').value = datend;
 
 
 //client = new Paho.MQTT.Client("mqtt.hostname.com", Number(9001), "", "clientId");
-client = new Paho.MQTT.Client("test.mosquitto.org", Number(8080), "", "clientId");
-//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"","clientId")
+//client = new Paho.MQTT.Client("test.mosquitto.org", Number(8080), "", "clientId");
+client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"","clientId")
 //client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(1883),"","clientId")
 //client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8091),"","clientId")
 //client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8090),"","clientId")
@@ -288,14 +288,14 @@ var myChart = new Chart(canvas, {
 
    
       pan: {
-        enabled: false,
-        mode: 'y',
+        //enabled: false,
+        mode: 'x',
         modifierKey: 'ctrl',
       },
 
       zoom: {
-        enabled: true,
-        mode: 'xy',
+        //enabled: true,
+        mode: 'x',
         drag: {
           enabled: true
         },
@@ -312,6 +312,7 @@ var myChart = new Chart(canvas, {
 
     scales: {
       xAxes: [{
+        
         display: true,
         scaleLabel: {
           display: true,
@@ -323,9 +324,7 @@ var myChart = new Chart(canvas, {
           //maxTicksLimit: 20,
           // max:3,
           // min:3,        
-        }
-
-      
+        }    
         
       }],
       yAxes: [{
@@ -342,10 +341,7 @@ var myChart = new Chart(canvas, {
           // max: scales.y.max,
           // min: 18,       
         },
-        type: 'linear',
-        ticks: {
-          callback: (val, index, ticks) => index === 0 || index === ticks.length - 1 ? null : val,
-        },
+       
 
       },
       {
