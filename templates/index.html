@@ -27,10 +27,10 @@
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
         rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
-    
+
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
     <script type="text/javascript" src="{% static 'js/chartjs-plugin-zoom.min.js'%}"></script>
-    
+
     <title>Simple garden</title>
 </head>
 
@@ -40,7 +40,8 @@
         <header class="header ">
             <div class="container">
                 <div class="header-top d-flex flex-wrap justify-content-between py-3 mb-4 border-bottom">
-                    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none ">
+                    <a href="/"
+                        class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none ">
                         <h1 class="title-icon"><i class="bi bi-stripe "></i></h1>
                         <span class="fs-4 ">
                             <h2> Simple garden</h2>
@@ -49,27 +50,48 @@
                     <nav class="navbar navbar-expand-lg bg-body-tertiary">
                         <div class="collapse navbar-collapse" id="navbarTogglerDemo">
                             <ul class="nav nav-pills">
-                                <li class="nav-item"><a href="/" class="nav-link active" aria-current="page">Мониторинг</a></li>
+                                <li class="nav-item"><a href="/" class="nav-link active"
+                                        aria-current="page">Мониторинг</a></li>
                                 <li class="nav-item"><a href="#" class="nav-link">Тренды</a></li>
                                 <li class="nav-item"><a href="#" class="nav-link">Настройка</a></li>
                                 <li class="nav-item"><a href="#" class="nav-link">About</a></li>
-                                
+
                             </ul>
-                            <a class="btn btn-sm btn-outline-secondary" href="#">Sign up</a>
+                            <!-- <a class="btn btn-sm btn-outline-secondary" href="{% url 'login' %}">Sign up</a> -->
+
+
+                            {% if user.is_authenticated %}
+                            <div class="dropdown ms-4">
+                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ request.user }}
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'logout' %}">Выход</a></li>
+                                </ul>
+                            </div>
+                            {% else %}
+                            <div class="ms-4">
+                                <a class="btn btn-sm btn-outline-secondary" href="{% url 'login' %}">Sign up</a>
+
+                            </div>
+                            {% endif %}
                         </div>
-                
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo"
-                            aria-controls="navbarTogglerDemo" aria-expanded="false" aria-label="Переключатель навигации">
+
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarTogglerDemo" aria-controls="navbarTogglerDemo" aria-expanded="false"
+                            aria-label="Переключатель навигации">
                             <span class="navbar-toggler-icon"><i class="bi bi-list"></i></span>
                         </button>
                     </nav>
-                    
+
                 </div>
             </div>
         </header>
         <main>
             <div class="container">
-                <div class="h4 pb-2 mb-4 text-primary-emphasis border-bottom border-primary-emphasis mt-3  d-flex justify-content-between align-items-center title-head">
+                <div
+                    class="h4 pb-2 mb-4 text-primary-emphasis border-bottom border-primary-emphasis mt-3  d-flex justify-content-between align-items-center title-head">
                     <div class="title">
                         <i class="bi bi-speedometer mr-2"></i> <span>Мониторинг</span>
 
@@ -113,7 +135,7 @@
                             <div>
                                 <nav class="navbar bg-body-tertiary">
                                     <div class="container-fluid ">
-                                        
+
                                         <a class="navbar-brand ">Trends</a>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="" id="myCheckbox"
@@ -121,7 +143,7 @@
                                             <label class="form-check-label text-secondary" for="myCheckbox">Мониторинг
                                             </label>
                                         </div>
-                                        
+
 
                                         <div class="d-flex  flex-column flex-lg-row" role="search">
                                             <div class="d-flex mb-2 mb-lg-0">
@@ -133,13 +155,13 @@
                                             <div class="d-flex  ">
                                                 <button class="btn btn-outline-secondary me-2" id="btnQuery"
                                                     disabled='true'>Search</button>
-                                                <button class="btn btn-outline-secondary me-2" id="btnExl" type="submit"><i
-                                                        class="bi bi-filetype-xls"></i></button>
+                                                <button class="btn btn-outline-secondary me-2" id="btnExl"
+                                                    type="submit"><i class="bi bi-filetype-xls"></i></button>
                                                 <button class="btn btn-outline-secondary me-2 " data-bs-toggle="modal"
                                                     data-bs-target="#staticBackdrop" type="button"><i
                                                         class="bi bi-table"></i></button>
-                                                <button class="btn btn-outline-secondary me-2" id="reset_zoom" type="submit"><i
-                                                        class="bi bi-aspect-ratio"></i></button>
+                                                <button class="btn btn-outline-secondary me-2" id="reset_zoom"
+                                                    type="submit"><i class="bi bi-aspect-ratio"></i></button>
                                             </div>
                                         </div>
 
@@ -147,11 +169,11 @@
                                 </nav>
                             </div>
                         </div>
-                       
+
                         <div class="w-auto h-100">
                             <canvas id="myChart">Trend</canvas>
                         </div>
-                       
+
                     </div>
                 </div>
 
@@ -206,11 +228,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
-    </script>
+        </script>
 
     <script src="{% static 'js/main.js'%}"></script>
     <script src="{% static 'js/mqtt_js.js'%}"></script>
-    
+
     <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
 </body>
 

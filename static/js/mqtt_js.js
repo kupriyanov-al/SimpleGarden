@@ -41,7 +41,7 @@ client.connect({onSuccess:onConnect});
 
 
 function fetchMonitoring() {
-  fetch(document.URL+'/home/db/')
+  fetch(window.location.href+ '/home/'+datest+'/'+datend+'')
     .then(response => response.json())
     .then(data => showdata(data, true));
     temp=""   

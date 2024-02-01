@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 # переопределяем стандартную форму AuthenticationForm
 class LoginForm(AuthenticationForm):  
-    user_name = forms.CharField(
+    username = forms.CharField(
         max_length=150,
         label="Login",
         widget=forms.TextInput(attrs={
