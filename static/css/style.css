@@ -85,6 +85,20 @@ a {
     background-color: #6c757d ! important;
 }
 
+.nav-pills a:hover {
+    color: rgb(14, 168, 135);
+}
+
+.dropdown a:hover {
+    color: var(--bg-color);
+    background-color: #6c757d;
+}
+.btmd {
+
+    font-size: 18px;
+}
+
+
 /* --------------Main--------------- */
 
 
