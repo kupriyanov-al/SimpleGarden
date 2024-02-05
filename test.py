@@ -6,6 +6,8 @@ import time, datetime
 from paho.mqtt import client as mqtt_client
 
 
+flag_connected = 0
+
 broker = 'test.mosquitto.org'
 port = 1883
 topic = "rasp"
@@ -24,6 +26,8 @@ def connect_mqtt() -> mqtt_client:
     client = mqtt_client.Client()
     client.on_connect = on_connect
     client.connect(broker, port)
+    global flag_connected
+    flag_connected = 1
     return client
 
 # сравнение двух сообщений для исключения отправки данных без изменений
@@ -35,13 +39,21 @@ def compare_dict(dect, dect_old):
         return True
     return False
 
+
+def on_disconnect(client, userdata, rc):
+    if rc != 0:
+        print(f"Unexpected MQTT disconnection. Will auto-reconnect. Statuc{rc}")
+        global flag_connected
+        flag_connected = 0
+
+
 def publish(client):
     msg_count = 0
     mes_old={} 
     
     
     while True:
-        time.sleep(10)
+        time.sleep(100)
         # msg = f"messages: {msg_count}"
         # now = datetime.datetime.now()
         msg = {"temperatura": random.randint(20, 35), "humidity": 50, "coolState": True, "releState": False}
@@ -49,6 +61,12 @@ def publish(client):
         
         # msg = sendfull(msg)
         # print(mes)
+        
+        if flag_connected:
+            print("connect")
+            
+        else:
+            print("disconnect")
         
         if not compare_dict(msg, mes_old):
             mes_old = msg.copy()
@@ -58,12 +76,15 @@ def publish(client):
             msg["datastamp"] = now.strftime('%d.%m.%Y %H:%M:%S')
             msg = json.dumps(msg)
             result = client.publish(topic, msg)
-       
+
+           
+            
             status = result[0]
             if status == 0:
                 print(f"Send `{msg}` to topic `{topic}`")
             else:
-                print(f"Failed to send message to topic {topic}")
+                print(f"Failed to send message to topic {topic} status:{status}" )
+                client.reconnect()
         
        
    
@@ -71,9 +92,17 @@ def publish(client):
 
 def run():
     client = connect_mqtt()
+    global flag_connected
+    
+    client.on_disconnect = on_disconnect
     publish(client)
-    client.loop_forever()
+    
+    client.loop_forever(timeout=1.0, max_packets=1,
+                         retry_first_connection=False)
 
+    # client.loop_start()
+    # publish(client)
+    # client.loop_stop()
 
 if __name__ == '__main__':
     run()
