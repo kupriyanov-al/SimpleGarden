@@ -41,14 +41,15 @@ client.connect(
   cleanSession: false,
   onSuccess: onConnect,
   onFailure: onConnectionLost,
-  keepAliveInterval: 300,
+  keepAliveInterval: 120,
   reconnect : true,         // Enable automatic reconnect
   
  }
 );
 
 function fetchMonitoring() {
-  fetch('http://127.0.0.1:8000/home/db/')
+  fetch(document.URL+'/home/db/')
+  // fetch('http://127.0.0.1:8000/home/db/')
     .then(response => response.json())
     .then(data => showdata(data, true));
     temp=""   
@@ -106,8 +107,8 @@ btnQuery.onclick = function () {
   // очистка данных графика
   clearDataChart();
   
-  // var datend = document.getElementById('datend'); 
-  //производим  действия
+  // var datend = document.getElementById('datend');
+  //производим  действия document.URL
   fetch('http://127.0.0.1:8000/home/'+datest+'/'+datend+'')
   // fetch('http://127.0.0.1:8000/home/01.11.2023/09.12.2023')
     .then(response => response.json())
@@ -171,7 +172,7 @@ function onConnect() {
   // Once a connection has been made, make a subscription and send a message.
   console.log("onConnect");
 
-  client.subscribe("rasp", qos = 0);
+  client.subscribe("rasp1", qos = 0);
   
   
 }

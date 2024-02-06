@@ -10,7 +10,7 @@ flag_connected = 0
 
 broker = 'test.mosquitto.org'
 port = 1883
-topic = "rasp"
+topic = "rasp1"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
 
@@ -55,7 +55,7 @@ def publish(client):
     
     
     while True:
-        time.sleep(10)
+        time.sleep(100)
         # msg = f"messages: {msg_count}"
         # now = datetime.datetime.now()
         msg = {"temperatura": random.randint(20, 35), "humidity": 50, "coolState": True, "releState": False}
