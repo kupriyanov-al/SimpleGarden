@@ -1,10 +1,13 @@
+
 console.log("TEST");
+
 var mqtt_server = "test.mosquitto.org";
 var mqtt_port = "1883";
 var mqtt_destname = "";
 let temperatura = 0;
 let humidity = 0;
 let datastamp="";
+let clientId = makeid(5);
 
 var btnQuery = document.getElementById('btnQuery');
 var myCheckbox = document.getElementById('myCheckbox');
@@ -25,7 +28,7 @@ document.getElementById('datest').value = datest;
 document.getElementById('datend').value = datend;
 
 
-client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"","clientId")
+client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"", clientId)
 
 
 // set callback handlers
