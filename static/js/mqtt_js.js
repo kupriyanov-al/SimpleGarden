@@ -209,18 +209,178 @@ function onMessageArrived(message) {
     }
     
   
-    // myChart.data.labels.push(datastamp);
-    // myChart.data.datasets[0].data.push(temperatura);
+    myChart.data.labels.push(datastamp);
+    myChart.data.datasets[0].data.push(temperatura);
     
-    // console.log(myChart.data.datasets[0].data.length) 
-    // if (myChart.data.datasets[0].data.length > 50) {
-    //   myChart.data.labels.shift();
-    //   myChart.data.datasets[0].data.shift();
-    // }
-    // myChart.update();
+    console.log(myChart.data.datasets[0].data.length) 
+    if (myChart.data.datasets[0].data.length > 50) {
+      myChart.data.labels.shift();
+      myChart.data.datasets[0].data.shift();
+    }
+    myChart.update();
 }
 
 
+
+
+var canvas = document.getElementById('myChart');
+var myChart = new Chart(canvas, {
+  type: 'line',
+  data: {
+    labels: [],
+    datasets: [{
+      label: "Температура",
+      borderColor: "#3e95cd",
+      backgroundColor: "#7bb6dd",
+      fill: false,
+      tension: 0.3,
+      data: [],
+      stepped: true,
+      
+      
+      yAxisID: 'A',
+      
+    }, {
+      yAxisID: 'B',
+      data: [],
+      stepped: true,
+      label: "Влажность",
+      borderColor: "#3cba9f",
+      backgroundColor: "#71d1bd",
+      fill: false,
+      //       // maxTicksLimit: 10,
+    },
+      {
+        yAxisID: 'C',
+        data: [],
+        steppedLine: true,
+        label: "Вентилятор",
+        borderColor: "#fc1d42",
+        backgroundColor: "#71d1bd",
+        fill: false,
+        
+        //       // maxTicksLimit: 10,
+
+      },
+      {
+        yAxisID: 'D',
+        data: [],
+        steppedLine: true,
+        label: "Освещение",
+        borderColor: "#0eec51",
+        backgroundColor: "#71d1bd",
+        fill: false,
+        //       // maxTicksLimit: 10,
+
+      },
+  ]
+  },
+  options: {
+    "responsive": true,
+    "maintainAspectRatio": false,
+    tooltip: false,
+    
+    
+    title: {
+          display: true,
+          text: 'Тренды'
+    },
+
+   
+      pan: {
+        //enabled: false,
+        mode: 'x',
+        modifierKey: 'ctrl',
+      },
+
+      zoom: {
+        //enabled: true,
+        mode: 'x',
+        drag: {
+          enabled: true
+        },
+       
+      },
+
+    scales: {
+      xAxes: [{
+        
+        display: true,
+        scaleLabel: {
+          display: true,
+          labelString: 'Time'
+        },
+        ticks: {
+          autoSkip: true,
+          
+          //maxTicksLimit: 20,
+          // max:3,
+          // min:3,        
+        }    
+        
+      }],
+      yAxes: [{
+        
+        scaleLabel: {
+                  display: true,
+                  labelString: 'Температура'
+                },
+        id: 'A',
+        type: 'linear',
+        position: 'right',
+        
+        ticks: {
+          // max: scales.y.max,
+          // min: 18,       
+        },
+       
+
+      },
+      {
+
+        id: 'B',
+        scaleLabel: {
+          display: true,
+          labelString: 'Влажность'
+        },
+        type: 'linear',
+        position: 'right',
+        ticks: {
+          max: 100,
+          min: 0
+        } 
+      },
+      {
+        id: 'C',
+        type: 'linear',
+        display: false,
+        // position: 'left',
+        ticks: {
+          max: 2,
+          min: 0,
+          beginAtZero: true
+        } 
+      },
+      {
+        id: 'D',
+        type: 'linear',
+        display: false,
+        ticks: {
+          max: 2,
+          min: 0,
+          beginAtZero: true
+        },
+        stepped: true,
+      }
+    ]
+    },
+   
+  }
+}
+
+);
+
+// -----------------------------------
 
 
 
@@ -354,171 +514,5 @@ function onMessageArrived(message) {
 //     }
 //   }
 // });
-
-// -----------------------------------
-var canvas = document.getElementById('myChart');
-var myChart = new Chart(canvas, {
-  type: 'line',
-  data: {
-    labels: [],
-    datasets: [{
-      label: "Температура",
-      borderColor: "#3e95cd",
-      backgroundColor: "#7bb6dd",
-      fill: false,
-      tension: 0.3,
-      data: [],
-      stepped: true,
-      
-      
-      yAxisID: 'A',
-      
-    }, {
-      yAxisID: 'B',
-      data: [],
-      stepped: true,
-      label: "Влажность",
-      borderColor: "#3cba9f",
-      backgroundColor: "#71d1bd",
-      fill: false,
-      //       // maxTicksLimit: 10,
-    },
-      {
-        yAxisID: 'C',
-        data: [],
-        steppedLine: true,
-        label: "Вентилятор",
-        borderColor: "#fc1d42",
-        backgroundColor: "#71d1bd",
-        fill: false,
-        
-        //       // maxTicksLimit: 10,
-
-      },
-      {
-        yAxisID: 'D',
-        data: [],
-        steppedLine: true,
-        label: "Освещение",
-        borderColor: "#0eec51",
-        backgroundColor: "#71d1bd",
-        fill: false,
-        //       // maxTicksLimit: 10,
-
-      },
-  ]
-  },
-  options: {
-    "responsive": true,
-    "maintainAspectRatio": false,
-    tooltip: false,
-    
-    
-    title: {
-          display: true,
-          text: 'Тренды'
-    },
-
-   
-      pan: {
-        //enabled: false,
-        mode: 'x',
-        modifierKey: 'ctrl',
-      },
-
-      zoom: {
-        //enabled: true,
-        mode: 'x',
-        drag: {
-          enabled: true
-        },
-       
-      },
-
-  
-   
-   
-      
- 
-    
-    
-
-    scales: {
-      xAxes: [{
-        
-        display: true,
-        scaleLabel: {
-          display: true,
-          labelString: 'Time'
-        },
-        ticks: {
-          autoSkip: true,
-          
-          //maxTicksLimit: 20,
-          // max:3,
-          // min:3,        
-        }    
-        
-      }],
-      yAxes: [{
-        
-        scaleLabel: {
-                  display: true,
-                  labelString: 'Температура'
-                },
-        id: 'A',
-        type: 'linear',
-        position: 'right',
-        
-        ticks: {
-          // max: scales.y.max,
-          // min: 18,       
-        },
-       
-
-      },
-      {
-
-        id: 'B',
-        scaleLabel: {
-          display: true,
-          labelString: 'Влажность'
-        },
-        type: 'linear',
-        position: 'right',
-        ticks: {
-          max: 100,
-          min: 0
-        } 
-      },
-      {
-        id: 'C',
-        type: 'linear',
-        display: false,
-        // position: 'left',
-        ticks: {
-          max: 2,
-          min: 0,
-          beginAtZero: true
-        } 
-      },
-      {
-        id: 'D',
-        type: 'linear',
-        display: false,
-        ticks: {
-          max: 2,
-          min: 0,
-          beginAtZero: true
-        },
-        stepped: true,
-      }
-    ]
-    },
-   
-  }
-}
-
-);
 
 // -----------------------------------
