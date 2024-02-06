@@ -25,20 +25,27 @@ document.getElementById('datest').value = datest;
 document.getElementById('datend').value = datend;
 
 
-//client = new Paho.MQTT.Client("mqtt.hostname.com", Number(9001), "", "clientId");
-client = new Paho.MQTT.Client("test.mosquitto.org", Number(8080), "", "clientId");
-//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"","clientId")
-//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(1883),"","clientId")
-//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8091),"","clientId")
-//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8090),"","clientId")
+client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"","clientId")
+
 
 // set callback handlers
 client.onConnectionLost = onConnectionLost;
 client.onMessageArrived = onMessageArrived;
 
 // connect the client
-client.connect({onSuccess:onConnect});
+//client.connect({ onSuccess: onConnect  });
 
+
+client.connect(
+{
+  cleanSession: false,
+  onSuccess: onConnect,
+  onFailure: onConnectionLost,
+  keepAliveInterval: 300,
+  reconnect : true,         // Enable automatic reconnect
+  
+ }
+);
 
 function fetchMonitoring() {
   fetch('http://127.0.0.1:8000/home/db/')
@@ -164,7 +171,9 @@ function onConnect() {
   // Once a connection has been made, make a subscription and send a message.
   console.log("onConnect");
 
-  client.subscribe("rasp");
+  client.subscribe("rasp", qos = 0);
+  
+  
 }
 
 // called when the client loses its connection

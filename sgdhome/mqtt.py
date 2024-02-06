@@ -12,6 +12,13 @@ def on_connect(client, userdata, flags, rc):
    print(f"Соединение с сервером mqtt: {broker_url}")
 
 
+def on_disconnect(client, userdata, rc):
+    if rc != 0:
+        print(
+            f"Unexpected MQTT disconnection. Will auto-reconnect. Status connection: {rc}")
+        client.reconnect()
+        
+
 def on_message(client, userdata, message):
    rec = json.loads(str(message.payload.decode()))
   
@@ -24,6 +31,7 @@ def on_message(client, userdata, message):
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
+client.on_disconnect = on_disconnect
 client.connect(broker_url, broker_port)
 
 client.subscribe("rasp", qos=0)
