@@ -1,10 +1,13 @@
+
 console.log("TEST");
+
 var mqtt_server = "test.mosquitto.org";
 var mqtt_port = "1883";
 var mqtt_destname = "";
 let temperatura = 0;
 let humidity = 0;
 let datastamp="";
+let clientId = makeid(5);
 
 var btnQuery = document.getElementById('btnQuery');
 var myCheckbox = document.getElementById('myCheckbox');
@@ -24,24 +27,33 @@ var datest = date.toISOString().substring(0, 10);
 document.getElementById('datest').value = datest;
 document.getElementById('datend').value = datend;
 
+console.log(clientId);
+client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"", clientId)
 
-//client = new Paho.MQTT.Client("mqtt.hostname.com", Number(9001), "", "clientId");
-//client = new Paho.MQTT.Client("test.mosquitto.org", Number(8080), "", "clientId");
-client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081),"","clientId")
-//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(1883),"","clientId")
-//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8091),"","clientId")
-//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8090),"","clientId")
 
 // set callback handlers
 client.onConnectionLost = onConnectionLost;
 client.onMessageArrived = onMessageArrived;
 
 // connect the client
-client.connect({onSuccess:onConnect});
+//client.connect({ onSuccess: onConnect  });
 
+
+client.connect(
+{
+  cleanSession: false,
+  onSuccess: onConnect,
+  onFailure: onConnectionLost,
+  keepAliveInterval: 120,
+  reconnect : true,         // Enable automatic reconnect
+  
+ }
+);
 
 function fetchMonitoring() {
-  fetch(document.URL+'/home/db/')
+  // fetch(document.URL+'/home/db/')
+  // fetch('http://127.0.0.1:8000/home/db/')
+  fetch('/home/db/')
     .then(response => response.json())
     .then(data => showdata(data, true));
     temp=""   
@@ -99,9 +111,9 @@ btnQuery.onclick = function () {
   // очистка данных графика
   clearDataChart();
   
-  // var datend = document.getElementById('datend'); 
-  //производим  действия
-  fetch(document.URL + '/home/'+datest+'/'+datend+'')
+  // var datend = document.getElementById('datend');
+  //производим  действия document.URL
+  fetch('http://127.0.0.1:8000/home/'+datest+'/'+datend+'')
   // fetch('http://127.0.0.1:8000/home/01.11.2023/09.12.2023')
     .then(response => response.json())
     .then(data => showdata(data, false));
@@ -164,7 +176,9 @@ function onConnect() {
   // Once a connection has been made, make a subscription and send a message.
   console.log("onConnect");
 
-  client.subscribe("rasp");
+  client.subscribe("rasp1", qos = 0);
+  
+  
 }
 
 // called when the client loses its connection
@@ -209,21 +223,182 @@ function onMessageArrived(message) {
     }
     
   
-    // myChart.data.labels.push(datastamp);
-    // myChart.data.datasets[0].data.push(temperatura);
+    myChart.data.labels.push(datastamp);
+    myChart.data.datasets[0].data.push(temperatura);
     
-    // console.log(myChart.data.datasets[0].data.length) 
-    // if (myChart.data.datasets[0].data.length > 50) {
-    //   myChart.data.labels.shift();
-    //   myChart.data.datasets[0].data.shift();
-    // }
-    // myChart.update();
+    console.log(myChart.data.datasets[0].data.length) 
+    if (myChart.data.datasets[0].data.length > 50) {
+      myChart.data.labels.shift();
+      myChart.data.datasets[0].data.shift();
+    }
+    myChart.update();
 }
 
+
+
+
+// var canvas = document.getElementById('myChart');
+// var myChart = new Chart(canvas, {
+//   type: 'line',
+//   data: {
+//     labels: [],
+//     datasets: [{
+//       label: "Температура",
+//       borderColor: "#3e95cd",
+//       backgroundColor: "#7bb6dd",
+//       fill: false,
+//       tension: 0.3,
+//       data: [],
+//       stepped: true,
+      
+      
+//       yAxisID: 'A',
+      
+//     }, {
+//       yAxisID: 'B',
+//       data: [],
+//       stepped: true,
+//       label: "Влажность",
+//       borderColor: "#3cba9f",
+//       backgroundColor: "#71d1bd",
+//       fill: false,
+//       //       // maxTicksLimit: 10,
+//     },
+//       {
+//         yAxisID: 'C',
+//         data: [],
+//         steppedLine: true,
+//         label: "Вентилятор",
+//         borderColor: "#fc1d42",
+//         backgroundColor: "#71d1bd",
+//         fill: false,
+        
+//         //       // maxTicksLimit: 10,
+
+//       },
+//       {
+//         yAxisID: 'D',
+//         data: [],
+//         steppedLine: true,
+//         label: "Освещение",
+//         borderColor: "#0eec51",
+//         backgroundColor: "#71d1bd",
+//         fill: false,
+//         //       // maxTicksLimit: 10,
+
+//       },
+//   ]
+//   },
+//   options: {
+//     "responsive": true,
+//     "maintainAspectRatio": false,
+//     tooltip: false,
+    
+    
+//     title: {
+//           display: true,
+//           text: 'Тренды'
+//     },
+
+   
+//       pan: {
+//         //enabled: false,
+//         mode: 'x',
+//         modifierKey: 'ctrl',
+//       },
+
+//       zoom: {
+//         //enabled: true,
+//         mode: 'x',
+//         drag: {
+//           enabled: true
+//         },
+       
+//       },
+
+//     scales: {
+//       xAxes: [{
+        
+//         display: true,
+//         scaleLabel: {
+//           display: true,
+//           labelString: 'Time'
+//         },
+//         ticks: {
+//           autoSkip: true,
+          
+//           //maxTicksLimit: 20,
+//           // max:3,
+//           // min:3,        
+//         }    
+        
+//       }],
+//       yAxes: [{
+        
+//         scaleLabel: {
+//                   display: true,
+//                   labelString: 'Температура'
+//                 },
+//         id: 'A',
+//         type: 'linear',
+//         position: 'right',
+        
+//         ticks: {
+//           // max: scales.y.max,
+//           // min: 18,       
+//         },
+       
+
+//       },
+//       {
+
+//         id: 'B',
+//         scaleLabel: {
+//           display: true,
+//           labelString: 'Влажность'
+//         },
+//         type: 'linear',
+//         position: 'right',
+//         ticks: {
+//           max: 100,
+//           min: 0
+//         } 
+//       },
+//       {
+//         id: 'C',
+//         type: 'linear',
+//         display: false,
+//         // position: 'left',
+//         ticks: {
+//           max: 2,
+//           min: 0,
+//           beginAtZero: true
+//         } 
+//       },
+//       {
+//         id: 'D',
+//         type: 'linear',
+//         display: false,
+//         ticks: {
+//           max: 2,
+//           min: 0,
+//           beginAtZero: true
+//         },
+//         stepped: true,
+//       }
+//     ]
+//     },
+   
+//   }
+// }
+
+// );
+
+// -----------------------------------
+
+
+
 var canvas = document.getElementById('myChart');
-
-
-
 var myChart = new Chart(canvas, {
   type: 'line',
   data: {
@@ -254,7 +429,7 @@ var myChart = new Chart(canvas, {
         yAxisID: 'C',
         data: [],
         steppedLine: true,
-        label: "Вентилятор",
+        label: "Освещение",
         borderColor: "#fc1d42",
         backgroundColor: "#71d1bd",
         fill: false,
@@ -266,7 +441,7 @@ var myChart = new Chart(canvas, {
         yAxisID: 'D',
         data: [],
         steppedLine: true,
-        label: "Освещение",
+        label: "Вентилятор",
         borderColor: "#0eec51",
         backgroundColor: "#71d1bd",
         fill: false,
@@ -276,43 +451,12 @@ var myChart = new Chart(canvas, {
   ]
   },
   options: {
-    "responsive": true,
-    "maintainAspectRatio": false,
-    tooltip: false,
-    
-    
     title: {
           display: true,
           text: 'Тренды'
     },
-
-   
-      pan: {
-        //enabled: false,
-        mode: 'x',
-        modifierKey: 'ctrl',
-      },
-
-      zoom: {
-        //enabled: true,
-        mode: 'x',
-        drag: {
-          enabled: true
-        },
-       
-      },
-
-  
-   
-   
-      
- 
-    
-    
-
     scales: {
       xAxes: [{
-        
         display: true,
         scaleLabel: {
           display: true,
@@ -323,9 +467,10 @@ var myChart = new Chart(canvas, {
           
           //maxTicksLimit: 20,
           // max:3,
-          // min:3,        
-        }    
-        
+          // min:3,
+
+          
+        }
       }],
       yAxes: [{
         
@@ -339,10 +484,9 @@ var myChart = new Chart(canvas, {
         
         ticks: {
           // max: scales.y.max,
-          // min: 18,       
-        },
-       
-
+          // min: 18,
+          
+        }
       },
       {
 
@@ -381,87 +525,8 @@ var myChart = new Chart(canvas, {
         stepped: true,
       }
     ]
-    },
-   
+    }
   }
-}
+});
 
-);
-
-
-
-// var ctx = document.getElementById('myChart').getContext('2d');
-// var myChart = new Chart(ctx, {
-//   type: 'line',
-//   data: {
-//     labels: [],
-//     datasets: [{
-//       data: [],
-//       // yAxisID: 'y1',
-//       label: "Температура",
-//       borderColor: "#3e95cd",
-//       backgroundColor: "#7bb6dd",
-//       fill: false,
-//       min: 0,
-//       max: 50, 
-       
-//     },
-//     {
-//       data: [],
-//       // yAxisID: 'y2',
-//       label: "Влажность",
-//       borderColor: "#3cba9f",
-//       backgroundColor: "#71d1bd",
-//       fill: false,
-//       // maxTicksLimit: 10,
-//       min: 0,
-//       max: 100,
-     
-//       // 
-//     }
-//     ]
-//   },
-
-
-
-//   options: {
-//     responsive: true,
-//     title: {
-//       display: true,
-//       text: 'Тренды'
-//     },
-//     scales: {
-//       xAxes: [{
-//         display: true,
-//         scaleLabel: {
-//           display: true,
-//           labelString: 'Time'
-//         },
-//         ticks: {
-//           autoSkip: true,
-//           // maxTicksLimit: 3,
-//           // max:3,
-//           // min:3,
-
-          
-//         }
-//       }],
-//       yAxes: [{
-//         display: true,
-        
-//         scaleLabel: {
-//           display: true,
-//           labelString: 'Temperature'
-//         },
-//         ticks: {
-//           beginAtZero: true,
-//           stepSize: 25, 
-//         },
-        
-
-        
-//       }]
-//     }
-//   }
-
-// });
+// -----------------------------------
