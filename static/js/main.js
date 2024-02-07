@@ -29,7 +29,32 @@ window.onload = function () {
     btnExl.onclick = function () {
         html_table_to_excel('xlsx')
     }
+   
     
+
+    // var myModal = document.getElementById('staticBackdrop1')
+    // myModal.addEventListener('shown.bs.modal', function () {
+    //     console.log("MODAL")
+    //     window.location.href = document.URL +'user/login'
+    // })
+    var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop1'), {
+        keyboard: false
+    })
+
+    // var modal_btn = document.getElementById('btn_modal_show');
+    // modal_btn.addEventListener('click', function (e) {
+    //     window.location.href = '{/user/login}'
+    // } )
+    // console.log(document.URL)
+
+    if (window.location.pathname == '/user/login/'){
+        myModal.show()
+    }
+
+    // console.log(document.URL)
+    // console.log(window.location.host);
+    // console.log(window.location.hostname);
+    // console.log(window.location.pathname);
 
 }
     

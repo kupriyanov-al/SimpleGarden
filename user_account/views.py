@@ -8,7 +8,8 @@ from user_account.forms import LoginForm
 
 class CastomLoginView(LoginView):
     authentication_form = LoginForm
-    template_name = 'user_account/login.html'
+    #template_name = 'user_account/login.html'
+    template_name = 'index.html'
     extra_context = {'title': 'Авторизация'}
     
     def get_success_url(self):

@@ -19,7 +19,8 @@ class LoginForm(AuthenticationForm):
         label="Password",
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'пароль'
+            'placeholder': 'пароль',
+            'type': 'password',
         })
     )
 
