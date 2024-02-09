@@ -10,13 +10,23 @@ broker_port = 1883
 
 def on_connect(client, userdata, flags, rc):
    print(f"Соединение с сервером mqtt: {broker_url}")
+   if rc == 0:
+        print(
+           f"Соединение OK: {rc}")
+        try:
+            client.subscribe("rasp1", qos=0)
+        except:
+            print("err!")
 
 
 def on_disconnect(client, userdata, rc):
     if rc != 0:
         print(
             f"Unexpected MQTT disconnection. Will auto-reconnect. Status connection: {rc}")
-        client.reconnect()
+        try:
+            client.reconnect()
+        except:
+            print("err!")
         
 
 def on_message(client, userdata, message):

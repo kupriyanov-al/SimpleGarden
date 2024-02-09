@@ -55,7 +55,7 @@ def publish(client):
     
     
     while True:
-        time.sleep(100)
+        time.sleep(10)
         # msg = f"messages: {msg_count}"
         # now = datetime.datetime.now()
         msg = {"temperatura": random.randint(20, 35), "humidity": 50, "coolState": True, "releState": False}
@@ -69,6 +69,7 @@ def publish(client):
             status = result[0]
                 
             if status == 0:
+                print(f"published={result.is_published()}")
                 print(f"Send `{msg}` to topic `{topic}`")
             else:
                 print(f"Failed to send message to topic {topic} status:{status}" )
@@ -81,7 +82,7 @@ def publish(client):
             now = datetime.datetime.now()
             msg["datastamp"] = now.strftime('%d.%m.%Y %H:%M:%S')
             msg = json.dumps(msg)
-            
+            print(flag_connected)
             if flag_connected:
                sendmqtt()
             else:          

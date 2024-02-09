@@ -223,15 +223,15 @@ function onMessageArrived(message) {
     }
     
   
-    myChart.data.labels.push(datastamp);
-    myChart.data.datasets[0].data.push(temperatura);
+    // myChart.data.labels.push(datastamp);
+    // myChart.data.datasets[0].data.push(temperatura);
     
-    console.log(myChart.data.datasets[0].data.length) 
-    if (myChart.data.datasets[0].data.length > 50) {
-      myChart.data.labels.shift();
-      myChart.data.datasets[0].data.shift();
-    }
-    myChart.update();
+    // console.log(myChart.data.datasets[0].data.length) 
+    // if (myChart.data.datasets[0].data.length > 50) {
+    //   myChart.data.labels.shift();
+    //   myChart.data.datasets[0].data.shift();
+    // }
+    // myChart.update();
 }
 
 

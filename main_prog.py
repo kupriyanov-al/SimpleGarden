@@ -6,12 +6,47 @@ import time, datetime
 from paho.mqtt import client as mqtt_client
 
 
+
+
+ # === Инициализация пинов ===
+pin=11
+DHT_PIN = 4
+COOL_PIN = 8
+relePin = 22
+    
+DHT_SENSOR = Adafruit_DHT.DHT22
+GPIO.setmode(GPIO.BOARD)                
+GPIO.setup(pin, GPIO.OUT, initial=0)
+GPIO.setup(COOL_PIN, GPIO.OUT, initial=0)
+GPIO.setup(relePin, GPIO.OUT, initial=0)
+
+# === Настройка программы ===
+
+# температура включения вентилятора
+temp_on = 25 
+# изменение температуры для отключения вентилятора
+temp_delta = 0.2
+# состояние вентилятора
+CoolState = False 
+# состояние реле
+ReleState = False
+# время включения реле
+time_on_rele = "21:44"
+# период работы реле в сек
+period_rele_on = 50
+
+
 # настройка соединения mqtt
+# ------------------------------------
+
 broker = 'test.mosquitto.org'
 port = 1883
-topic = "rasp"
+topic = "rasp1"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
+
+# ------------------------------------
+
 
 def connect_mqtt() -> mqtt_client:
     def on_disconnect(client, userdata, rc):
@@ -51,68 +86,44 @@ def publish(client, msg):
 client = connect_mqtt()
 
 
-try:
-    # === Инициализация пинов ===
-    pin=11
-    DHT_PIN = 4
-    COOL_PIN = 8
-    relePin = 22
+
+
+val={}
     
-    DHT_SENSOR = Adafruit_DHT.DHT22
-    GPIO.setmode(GPIO.BOARD)                
-    GPIO.setup(pin, GPIO.OUT, initial=0)
-    GPIO.setup(COOL_PIN, GPIO.OUT, initial=0)
-    GPIO.setup(relePin, GPIO.OUT, initial=0)
-    
-    
-    # температура включения вентилятора 
-    temp_on = 25 
-    # изменение температуры для отключения вентилятора
-    temp_delta = 0.2
-    # состояние вентилятора
-    CoolState = False 
-    # состояние реле
-    ReleState = False
-    # время включения реле
-    time_on_rele = "21:44"
-    # период работы реле в сек
-    period_rele_on = 50
-    # 
-    val={}
-    
-    def get_temp_hum():
-        humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
-        if humidity is not None and temperature is not None:
-            temperature = round(temperature,2)
-            humidity = round(humidity,1)
+def get_temp_hum():
+    humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
+    if humidity is not None and temperature is not None:
+        temperature = round(temperature,2)
+        humidity = round(humidity,1)
             
-            # temperature = round(temperature /0.25)*0.25 #
-            # humidity = round(humidity/5)*5
+         # temperature = round(temperature /0.25)*0.25 #
+        # humidity = round(humidity/5)*5
             
-            DHT={'humidity':humidity,'temperature':temperature}        
-        return DHT
+        DHT={'humidity':humidity,'temperature':temperature}        
+    return DHT
     
-    def sendfull(mes):
-        global val
-        now = datetime.datetime.now()
-        print(val)
-        if mes!=val:
-            val=mes.copy()
-            mes["datastamp"]= now.strftime('%d.%m.%Y %H:%M:%S')
-            
-            return mes
-        return False
-    
+def sendfull(mes):
+    global val
+    now = datetime.datetime.now()
+    print(val)
+    if mes!=val:
+        val=mes.copy()
+        mes["datastamp"]= now.strftime('%d.%m.%Y %H:%M:%S') 
+        return mes
+    return False
     
     
-    def compare_dict(dect, dect_old):
-    # if msg is None or dict_msg is None:
-        if dect == dect_old:
-            return True
-        return False
     
-    mes_old={}
+def compare_dict(dect, dect_old):
+# if msg is None or dict_msg is None:
+    if dect == dect_old:
+        return True
+    return False
+    
+mes_old={}
     # Здесь размещаем основной рабочий код
+    
+try:
     while True:
         DHT=get_temp_hum()
         #print("Temp={0}*C Humidity={1}%".format(DHT['temperature'], DHT['humidity']))
