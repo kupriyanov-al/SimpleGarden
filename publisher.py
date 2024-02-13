@@ -29,6 +29,7 @@ class ParamSetup:
     def __init__(self) -> None:
         self._temp_on = 25
         self._temp_delta = 0.2
+        self._msgParam = {}
         
     @property 
     def temp_on(self):
@@ -45,6 +46,14 @@ class ParamSetup:
     @temp_delta.setter
     def temp_delta(self, x):
         self._temp_delta = x
+    
+    @property    
+    def msgParam(self):
+        return self._msgParam 
+        
+    @msgParam.setter
+    def msgParam(self, x):
+        self._msgParam  = x
         
 
 param = ParamSetup()
@@ -89,10 +98,38 @@ def connect_mqtt() -> mqtt_client:
     def on_message(client, userdata, message):
         if message.topic == "param":
             print("запись в переменные контроллера")
-            param.temp_on = json.loads(
-                str(message.payload.decode()))["temp_on"]
-            param.temp_delta = json.loads(str(message.payload.decode()))["temp_delta"]
-            print(f"запись в переменные контроллера temp_on={param.temp_on}")
+            
+            
+            if param.msgParam!=json.loads(str(message.payload.decode())):
+                print("111111111")
+                
+                param.msgParam=json.loads(str(message.payload.decode()))
+            
+                param.temp_on= json.loads(str(message.payload.decode()))["temp_on"]
+                param.temp_delta = json.loads(str(message.payload.decode()))["temp_delta"]
+                
+                msg = { 
+                 'temp_on' : param.temp_on,
+                 'temp_delta' : param.temp_delta
+                        }
+                msg = json.dumps(msg)
+                
+                client.publish("param", msg, QOS, retain=True)
+            
+            # if temp_on_new != param.temp_on:
+            
+            #     param.temp_on = json.loads(
+            #         str(message.payload.decode()))["temp_on"]
+            #     param.temp_delta = json.loads(str(message.payload.decode()))["temp_delta"]
+            #     print(f"запись в переменные контроллера temp_on={param.temp_on}")
+                
+                
+            #     msg = { 
+            #         'temp_on' : param.temp_on,
+            #         'temp_delta' : param.temp_delta
+            #             }
+            #     msg = json.dumps(msg)
+            #     client.publish("param", msg, QOS, retain=True)
             
   
     client = mqtt_client.Client(client_id, clean_session=False)
@@ -118,7 +155,7 @@ def publish(client):
 # ---------------------------    
     msg = { 
            'temp_on' : param.temp_on,
-           'temp_delta' : temp_delta
+           'temp_delta' : param.temp_delta
     }
     msg = json.dumps(msg)
     result = client.publish("param", msg, QOS, retain=True)
@@ -130,6 +167,8 @@ def publish(client):
  #---------------------------------   
     
     while True:
+       
+        print(f"проверка temp_on={param.temp_on}")
        
         temp = random.randint(20, 30)
         # temp = 1
