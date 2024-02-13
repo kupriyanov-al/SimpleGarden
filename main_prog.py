@@ -45,9 +45,9 @@ topic = "rasp1"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
 
-# ------------------------------------
 
 
+ #-----------------MQTT-------------------------
 def connect_mqtt() -> mqtt_client:
     def on_disconnect(client, userdata, rc):
         if rc != 0:
@@ -84,12 +84,10 @@ def publish(client, msg):
             
        
 client = connect_mqtt()
+# -----------------MQTT END-------------------------
 
 
-
-
-val={}
-    
+# получение показаний с датчика DHT    
 def get_temp_hum():
     humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
     if humidity is not None and temperature is not None:
@@ -102,18 +100,8 @@ def get_temp_hum():
         DHT={'humidity':humidity,'temperature':temperature}        
     return DHT
     
-def sendfull(mes):
-    global val
-    now = datetime.datetime.now()
-    print(val)
-    if mes!=val:
-        val=mes.copy()
-        mes["datastamp"]= now.strftime('%d.%m.%Y %H:%M:%S') 
-        return mes
-    return False
-    
-    
-    
+   
+# Сравнения записи   
 def compare_dict(dect, dect_old):
 # if msg is None or dict_msg is None:
     if dect == dect_old:
@@ -121,8 +109,9 @@ def compare_dict(dect, dect_old):
     return False
     
 mes_old={}
-    # Здесь размещаем основной рабочий код
     
+    
+    # Здесь размещаем основной рабочий код 
 try:
     while True:
         DHT=get_temp_hum()
@@ -159,15 +148,7 @@ try:
            print(msg)
            publish(client,msg)  
         
-       #msgf = sendfull(msg)
-       #print('----')
-        #print(msgf)
-        #if msgf:
-            
-        #    publish(client,msgf)    
-        #else:
-        #    GPIO.output(relePin, False)
-        #print(seconds)    
+  
         time.sleep(2)
         
 except KeyboardInterrupt:

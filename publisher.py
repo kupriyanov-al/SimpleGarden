@@ -76,11 +76,13 @@ def connect_mqtt() -> mqtt_client:
 
 def publish(client):
     mes_old={}
-    # temp = random.randint(20, 30)
-    temp = 1
+    
     
     
     while True:
+        temp = random.randint(20, 30)
+        # temp = 1
+        
         time.sleep(10)
         msg = {"temperatura": temp, "humidity": 50,
                "coolState": True, "releState": False}
