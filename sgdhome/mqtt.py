@@ -37,6 +37,8 @@ def on_message(client, userdata, message):
          rec['humidity'], rec['coolState'], rec['releState'])
    print(rec)
    
+   
+   
 
 client = mqtt.Client()
 client.on_connect = on_connect

@@ -20,14 +20,42 @@ client_id = f'python-mqtt-{random.randint(0, 100)}'
 # --------------------
 
 
+# температура включения вентилятора
+temp_on = 25
+# изменение температуры для отключения вентилятора
+temp_delta = 0.2
+
+class ParamSetup:
+    def __init__(self) -> None:
+        self._temp_on = 25
+        self._temp_delta = 0.2
+        
+    @property 
+    def temp_on(self):
+        return self._temp_on
+        
+    @temp_on.setter
+    def temp_on(self, x):
+        self._temp_on = x
+        
+    @property    
+    def temp_delta(self):
+        return self._temp_delta
+        
+    @temp_delta.setter
+    def temp_delta(self, x):
+        self._temp_delta = x
+        
+
+param = ParamSetup()
+
+
 # сравнение двух сообщений для исключения отправки данных без изменений
 def compare_dict(dect, dect_old):
     # if msg is None or dict_msg is None:
     if dect == dect_old:
         return True
     return False
-
-
 
 
 
@@ -56,7 +84,15 @@ def connect_mqtt() -> mqtt_client:
               print("Disconnected")
         else:
          print("Disconnected successfully")
-        
+ 
+    
+    def on_message(client, userdata, message):
+        if message.topic == "param":
+            print("запись в переменные контроллера")
+            param.temp_on = json.loads(
+                str(message.payload.decode()))["temp_on"]
+            param.temp_delta = json.loads(str(message.payload.decode()))["temp_delta"]
+            print(f"запись в переменные контроллера temp_on={param.temp_on}")
             
   
     client = mqtt_client.Client(client_id, clean_session=False)
@@ -68,18 +104,33 @@ def connect_mqtt() -> mqtt_client:
     client.on_connect = on_connect
     client.on_publish = on_publish
     client.on_disconnect = on_disconnect
+    client.on_message = on_message
     client.connect(broker, port)  # 
     
     return client
 
 
 
+
 def publish(client):
     mes_old={}
-    
-    
+
+# ---------------------------    
+    msg = { 
+           'temp_on' : param.temp_on,
+           'temp_delta' : temp_delta
+    }
+    msg = json.dumps(msg)
+    result = client.publish("param", msg, QOS, retain=True)
+    status = result[0]
+    if status == 0:
+        print(f"параметры отправлены  `{msg}` to topic `param`")
+    else:
+        print(f"Failed to send message to topic {topic}")
+ #---------------------------------   
     
     while True:
+       
         temp = random.randint(20, 30)
         # temp = 1
         
@@ -118,6 +169,7 @@ def publish(client):
             
 def run():
     client = connect_mqtt()
+    client.subscribe("param", qos=0)
     try:
         client.loop_start()
         # client.loop_forever()

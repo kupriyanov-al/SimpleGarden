@@ -55,10 +55,12 @@
                                 <li class="nav-item"><a href="/" class="nav-link" aria-current="page">Мониторинг</a>
                                 </li>
                                 {% if user.is_authenticated %}
-                                <li class="nav-item"><a href="#" class="nav-link">Настройка</a></li>
+                                <li class="nav-item"><a href="#" type="button" class="nav-link" data-bs-toggle="modal"
+                                        data-bs-target="#staticBackdropParamForm">Настройка</a></li>
+
                                 {% endif %}
                                 <li class="nav-item"><a href="#" class="nav-link">About</a></li>
-                               
+
                             </ul>
                             <!-- <a class="btn btn-sm btn-outline-secondary" href="{% url 'login' %}">Sign up</a> -->
 
@@ -74,9 +76,8 @@
                             </div>
                             {% else %}
                             <div class="ms-4">
-                                <a class="btn btn-sm btn-outline-secondary btmd" href="{% url 'login' %}" id="btn_modal_show" 
-                                     ><i
-                                        class="bi bi-person"></i> | Вход</a>
+                                <a class="btn btn-sm btn-outline-secondary btmd" href="{% url 'login' %}"
+                                    id="btn_modal_show"><i class="bi bi-person"></i> | Вход</a>
 
                             </div>
                             {% endif %}
@@ -134,7 +135,7 @@
 
         <!-- Modal login-->
         <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -165,17 +166,60 @@
             </div>
         </div>
         <!-- Modal login end-->
-        <footer class="footer">
-            <div class="footer-title">
-                <div class="header-top d-flex flex-wrap justify-content-center py-3 mb-4 fs-5 text-secondary">
-                    <div>
-                        Simple garden
+
+        <!-- Modal ParamForm-->
+        <div class="modal fade" id="staticBackdropParamForm" data-bs-backdrop="static" data-bs-keyboard="false"
+            tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Настройка работы</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                     </div>
-
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="formGroupExampleInput" class="form-label">Температура вкл. вентилятора</label>
+                            <input type="text" class="form-control" id="formInputTemp"
+                                placeholder="Введите температуру в С">
+                        </div>
+                        <div class="mb-3">
+                            <label for="formGroupExampleInput2" class="form-label">Изменение температуры на отключение вентилятора</label>
+                            <input type="text" class="form-control" id="formInputTempDelta"
+                                placeholder="Введите максимальное отклонение для отключения">
+                        </div>
+                        <div class="mb-3">
+                            <label for="formGroupExampleInput2" class="form-label">Время включения реле</label>
+                            <input type="text" class="form-control" id="formInputTimeRele"
+                                placeholder="Введите время включения реле">
+                        </div>
+                        <div class="mb-3">
+                            <label for="formGroupExampleInput2" class="form-label">Время работы реле</label>
+                            <input type="text" class="form-control" id="formInputTimeReleWork"
+                                placeholder="Введите время работы реле (в сек)">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" id="btnParamSend">Записать</button>
                 </div>
+                </div>
+                
             </div>
+        </div>
+    </div>
+    <!-- Modal ParamForm end-->
 
-        </footer>
+    <footer class="footer">
+        <div class="footer-title">
+            <div class="header-top d-flex flex-wrap justify-content-center py-3 mb-4 fs-5 text-secondary">
+                <div>
+                    Simple garden
+                </div>
+
+            </div>
+        </div>
+
+    </footer>
 
     </div>
 
