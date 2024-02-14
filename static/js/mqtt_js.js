@@ -8,15 +8,14 @@ let temperatura = 0;
 let humidity = 0;
 let datastamp="";
 let clientId = makeid(5);
-
 let topic_param = "param1";
+
 
 var btnQuery = document.getElementById('btnQuery');
 var myCheckbox = document.getElementById('myCheckbox');
 var reset_zoom = document.getElementById('reset_zoom');
 
 var btnParamSend = document.getElementById('btnParamSend');
-
 
 myCheckbox.checked = true;
 var temp = "";
@@ -32,13 +31,93 @@ document.getElementById('datest').value = datest;
 document.getElementById('datend').value = datend;
 
 console.log(clientId);
-// client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),"", clientId)
-client = new Paho.MQTT.Client("test.mosquitto.org", Number(8081), "", clientId)
+
+client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),"", clientId)
+//client = new Paho.MQTT.Client("test.mosquitto.org", Number(8081), "", clientId)
 
 // set callback handlers
 client.onConnectionLost = onConnectionLost;
 client.onMessageArrived = onMessageArrived;
+client.onD
 
+// called when the client connects
+function onConnect() {
+  // Once a connection has been made, make a subscription and send a message.
+  console.log("onConnect");
+  client.subscribe("rasp1", qos = 0);
+  client.subscribe(topic_param, qos = 0); 
+  document.getElementById("formInputTemp").disabled = false
+  document.getElementById("formInputTempDelta").disabled = false
+  document.getElementById("formInputTimeRele").disabled = false
+  document.getElementById("formInputTimeReleWork").disabled = false
+
+  
+}
+
+// called when a message arrives
+function onMessageArrived(message) {
+  //console.log("onMessageArrived:"+message.payloadString);
+  console.log("message.topic")
+  console.log(message.topic)
+
+  // var result = message.destinationName + " : " + message.payloadString + "";
+  mes = JSON.parse(message.payloadString);
+  //console.log(mes)
+  
+
+  
+// получены настройки параметров
+if (message.topic == topic_param){
+  document.getElementById("formInputTemp").value = mes['temp_on']
+  document.getElementById("formInputTempDelta").value = mes['temp_delta']
+  document.getElementById("formInputTimeRele").value = mes['timeRele']
+  document.getElementById("formInputTimeReleWork").value = mes['timeReleWork']
+  console.log("-------получено при изменении---------")
+  console.log(mes)
+  console.log("-------_______________________---------")
+} 
+else 
+{
+
+  temperatura = mes['temperatura'];
+  humidity = mes['humidity'];
+  coolState = mes['coolState'];
+  releState = mes['releState'];
+
+  datastamp = mes['datastamp'];
+
+
+  coolState_onoff=(coolState==true)?'ON':'OFF';
+  releState_onoff=(releState==true)?'ON':'OFF';
+
+  // document.querySelector(".submsg").innerHTML = temperatura; 
+  document.getElementById("temperature").innerHTML = temperatura; 
+  document.getElementById("humidity").innerHTML = humidity;
+  document.getElementById("coolState").innerHTML = coolState_onoff;
+  document.getElementById("releState").innerHTML = releState_onoff;
+  document.getElementById("datastamp").innerHTML = datastamp;
+  
+  let data=[];
+  data.push(mes) 
+
+  console.log(data)
+
+  if (myCheckbox.checked) {
+    showdata(data, true)
+  }
+}  
+}
+
+function onConnectionLost(responseObject) {
+  if (responseObject.errorCode !== 0) {
+    console.log("onConnectionLost:"+responseObject.errorMessage);
+    document.getElementById("formInputTemp").disabled = true
+    document.getElementById("formInputTempDelta").disabled = true
+    document.getElementById("formInputTimeRele").disabled = true
+    document.getElementById("formInputTimeReleWork").disabled = true
+  }
+  
+}
 
 
 
@@ -52,6 +131,9 @@ client.connect(
   
  }
 );
+
+
+
 
 function fetchMonitoring() {
   // fetch(document.URL+'/home/db/')
@@ -172,85 +254,6 @@ function showdata(data, prd) {
   }
   
 }
-
-
-// called when the client connects
-function onConnect() {
-  // Once a connection has been made, make a subscription and send a message.
-  console.log("onConnect");
-
-  client.subscribe("rasp1", qos = 0);
-  client.subscribe(topic_param, qos = 0);
-
-
-  
-}
-
-
-
-
-
-
-function onConnectionLost(responseObject) {
-    if (responseObject.errorCode !== 0) {
-      console.log("onConnectionLost:"+responseObject.errorMessage);
-    }
-  }
-
-// called when a message arrives
-function onMessageArrived(message) {
-    //console.log("onMessageArrived:"+message.payloadString);
-    console.log("message.topic")
-    console.log(message.topic)
-
-    // var result = message.destinationName + " : " + message.payloadString + "";
-    mes = JSON.parse(message.payloadString);
-    //console.log(mes)
-    
-
-    
-  // получены настройки параметров
-  if (message.topic == topic_param){
-    document.getElementById("formInputTemp").value = mes['temp_on']
-    document.getElementById("formInputTempDelta").value = mes['temp_delta']
-    document.getElementById("formInputTimeRele").value = mes['timeRele']
-    document.getElementById("formInputTimeReleWork").value = mes['timeReleWork']
-    console.log("-------получено при изменении---------")
-    console.log(mes)
-    console.log("-------_______________________---------")
-  } 
-  else 
-  {
-
-    temperatura = mes['temperatura'];
-    humidity = mes['humidity'];
-    coolState = mes['coolState'];
-    releState = mes['releState'];
-
-    datastamp = mes['datastamp'];
-
-
-    coolState_onoff=(coolState==true)?'ON':'OFF';
-    releState_onoff=(releState==true)?'ON':'OFF';
-
-    // document.querySelector(".submsg").innerHTML = temperatura; 
-    document.getElementById("temperature").innerHTML = temperatura; 
-    document.getElementById("humidity").innerHTML = humidity;
-    document.getElementById("coolState").innerHTML = coolState_onoff;
-    document.getElementById("releState").innerHTML = releState_onoff;
-    document.getElementById("datastamp").innerHTML = datastamp;
-    
-    let data=[];
-    data.push(mes) 
-// Тренды
-    console.log(data)
-
-    if (myCheckbox.checked) {
-      showdata(data, true)
-    }
-  }  
-}
-
 
 
 

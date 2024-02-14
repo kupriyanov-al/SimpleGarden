@@ -52,13 +52,30 @@ window.onload = function () {
         myModal.show()
     }
 
-    // console.log(document.URL)
-    // console.log(window.location.host);
-    // console.log(window.location.hostname);
-    // console.log(window.location.pathname);
+    // const formInputTemp = document.getElementById('formInputTemp');
+    // console.log('----max----')
+    // console.log(formInputTemp.max)
 
+    // formInputTemp.addEventListener('input', function() {
+    //     const value = formInputTemp.value;
+    //     if (value > formInputTemp.max){
+    //         formInputTemp.value=50;
+    //     } 
+    //   });
+
+    
 }
     
+function imposeMinMax(el){
+    if(el.value != ""){
+      if(parseInt(el.value) < parseInt(el.min)) {
+        el.value = el.min;
+      }
+      if(parseInt(el.value) > parseInt(el.max)){
+        el.value = el.max;
+      }
+    }
+}
 
     
     

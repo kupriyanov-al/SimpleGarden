@@ -30,9 +30,13 @@ class CompareDist:
             return False
         return True
         
-        
-    
-    
+    def timeStampMsg(self, mesnew):
+        if self._mesOld != mesnew:
+            self._mesOld = mesnew.copy()   
+            now = datetime.datetime.now()
+            mesnew["datastamp"] = now.strftime('%d.%m.%Y %H:%M:%S')
+            return mesnew
+        return False
     
 
 class ParamSetup:
@@ -185,28 +189,24 @@ def publish(client):
         print(f"проверка temp_on={param.timeReleWork}")
        
         temp = random.randint(20, 30)
-        #temp = 1
+        # temp = 1
         
         time.sleep(10)
         msg = {"temperatura": temp, "humidity": 50,
                "coolState": True, "releState": False}
         
         # ------------------------------
-        qqq = m.comparemes(msg)
-        print(f" m.comparemes = {qqq} ")
+        val = m.timeStampMsg(msg)
+        print(f" m = {val} ")
             
         # ______________________________
        
         # проверка изменения сообщения
-        if qqq == False:
-            print(f" m.comparemes_____________ = {qqq} ")
+        if val != False:
+            print(f" m.comparemes_____________ = {val} ")  
 
-            now = datetime.datetime.now()
-            msg["datastamp"] = now.strftime('%d.%m.%Y %H:%M:%S')
-            msg = json.dumps(msg)
-       
             # Записываем в стек
-            q.put(msg)  
+            q.put(json.dumps(val))  
 
             print(f"connected_flag={client.connected_flag}")
         
