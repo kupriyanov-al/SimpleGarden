@@ -9,6 +9,8 @@ let humidity = 0;
 let datastamp="";
 let clientId = makeid(5);
 
+let topic_param = "param1";
+
 var btnQuery = document.getElementById('btnQuery');
 var myCheckbox = document.getElementById('myCheckbox');
 var reset_zoom = document.getElementById('reset_zoom');
@@ -30,8 +32,8 @@ document.getElementById('datest').value = datest;
 document.getElementById('datend').value = datend;
 
 console.log(clientId);
-client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),"", clientId)
-
+// client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),"", clientId)
+client = new Paho.MQTT.Client("test.mosquitto.org", Number(8081), "", clientId)
 
 // set callback handlers
 client.onConnectionLost = onConnectionLost;
@@ -178,7 +180,8 @@ function onConnect() {
   console.log("onConnect");
 
   client.subscribe("rasp1", qos = 0);
-  client.subscribe("param", qos = 0);
+  client.subscribe(topic_param, qos = 0);
+
 
   
 }
@@ -206,12 +209,15 @@ function onMessageArrived(message) {
     
 
     
-
-  if (message.topic=='param'){
+  // получены настройки параметров
+  if (message.topic == topic_param){
     document.getElementById("formInputTemp").value = mes['temp_on']
     document.getElementById("formInputTempDelta").value = mes['temp_delta']
-    console.log("-----------------")
+    document.getElementById("formInputTimeRele").value = mes['timeRele']
+    document.getElementById("formInputTimeReleWork").value = mes['timeReleWork']
+    console.log("-------получено при изменении---------")
     console.log(mes)
+    console.log("-------_______________________---------")
   } 
   else 
   {
@@ -248,7 +254,7 @@ function onMessageArrived(message) {
 
 
 
-// ----- Отправка настроек в контроллер---------
+// ----- Отправка настроек в контроллер по кнопке---------
 btnParamSend.onclick = function () {
   formInputTemp = document.getElementById("formInputTemp").value 
   console.log(formInputTemp)
@@ -256,10 +262,13 @@ btnParamSend.onclick = function () {
 
   var payload = {
     temp_on: document.getElementById("formInputTemp").value,
-    temp_delta: document.getElementById("formInputTempDelta").value     
+    temp_delta: document.getElementById("formInputTempDelta").value,
+    timeRele: document.getElementById("formInputTimeRele").value,
+    timeReleWork: document.getElementById("formInputTimeReleWork").value,
+
    };
 
-   client.publish('param', JSON.stringify(payload));
+  client.publish(topic_param, JSON.stringify(payload), 0, retain = true);
    console.log("param send............");
 
 }

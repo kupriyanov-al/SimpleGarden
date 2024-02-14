@@ -179,22 +179,22 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="formGroupExampleInput" class="form-label">Температура вкл. вентилятора</label>
-                            <input type="text" class="form-control" id="formInputTemp"
+                            <input  class="form-control" type="number" id="formInputTemp" min="5" max="50" 
                                 placeholder="Введите температуру в С">
                         </div>
                         <div class="mb-3">
                             <label for="formGroupExampleInput2" class="form-label">Изменение температуры на отключение вентилятора</label>
-                            <input type="text" class="form-control" id="formInputTempDelta"
+                            <input  class="form-control" type="number" id="formInputTempDelta" min="0.1" max="5"
                                 placeholder="Введите максимальное отклонение для отключения">
                         </div>
                         <div class="mb-3">
                             <label for="formGroupExampleInput2" class="form-label">Время включения реле</label>
-                            <input type="text" class="form-control" id="formInputTimeRele"
+                            <input type="time" class="form-control" id="formInputTimeRele"
                                 placeholder="Введите время включения реле">
                         </div>
                         <div class="mb-3">
                             <label for="formGroupExampleInput2" class="form-label">Время работы реле</label>
-                            <input type="text" class="form-control" id="formInputTimeReleWork"
+                            <input type="number" class="form-control" id="formInputTimeReleWork" min="5" max="1440"
                                 placeholder="Введите время работы реле (в сек)">
                         </div>
                     </div>

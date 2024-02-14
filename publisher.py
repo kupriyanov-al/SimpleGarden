@@ -14,38 +14,67 @@ q = queue.Queue()
 broker = 'test.mosquitto.org'
 port = 1883
 topic = "rasp1"
+topic_param = "param1"
 QOS = 1
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
 # --------------------
 
-
-# температура включения вентилятора
-temp_on = 25
-# изменение температуры для отключения вентилятора
-temp_delta = 0.2
+class CompareDist:
+    def __init__(self) -> None:
+        self._mesOld = {}
+        
+    def comparemes(self, mesnew):
+        if self._mesOld != mesnew:
+            self._mesOld = mesnew.copy()
+            return False
+        return True
+        
+        
+    
+    
+    
 
 class ParamSetup:
     def __init__(self) -> None:
-        self._temp_on = 25
-        self._temp_delta = 0.2
-        self._msgParam = {}
+        self._msgParam = {
+            'temp_on': "25",
+            'temp_delta': "0.2",
+            'timeRele': "21:00",
+            'timeReleWork' : "30"
+        }
         
     @property 
     def temp_on(self):
-        return self._temp_on
+        return self._msgParam['temp_on']
         
     @temp_on.setter
     def temp_on(self, x):
-        self._temp_on = x
+        self._msgParam['temp_on'] = x
         
     @property    
     def temp_delta(self):
-        return self._temp_delta
+        return self._msgParam['temp_delta']
         
     @temp_delta.setter
     def temp_delta(self, x):
-        self._temp_delta = x
+        self._msgParam['temp_delta'] = x
+        
+    @property 
+    def timeRele(self):
+        return self._msgParam['timeRele']
+        
+    @timeRele.setter
+    def timeRele(self, x):
+        self._msgParam['timeRele'] = x
+        
+    @property
+    def timeReleWork(self):
+        return self._msgParam['timeReleWork']
+
+    @timeReleWork.setter
+    def timeReleWork(self, x):
+        self._msgParam['timeReleWork'] = x
     
     @property    
     def msgParam(self):
@@ -92,44 +121,31 @@ def connect_mqtt() -> mqtt_client:
             except:
               print("Disconnected")
         else:
-         print("Disconnected successfully")
+            print("Disconnected successfully")
  
     
     def on_message(client, userdata, message):
-        if message.topic == "param":
+        if message.topic == topic_param:
             print("запись в переменные контроллера")
             
             
             if param.msgParam!=json.loads(str(message.payload.decode())):
                 print("111111111")
+                print(param.msgParam)
+                print(json.loads(str(message.payload.decode())))
+                param.msgParam=json.loads(str(message.payload.decode()))                         
+               
+                msg = json.dumps(param.msgParam)
                 
-                param.msgParam=json.loads(str(message.payload.decode()))
+                result = client.publish(topic_param, msg, 0, retain=True)
+                
+                status = result[0]
+                if status == 0:
+                    print(f"данные  `{msg}` to topic {topic_param}`")
+                else:
+                    print(f"Failed to send message to topic {topic}")
+               
             
-                param.temp_on= json.loads(str(message.payload.decode()))["temp_on"]
-                param.temp_delta = json.loads(str(message.payload.decode()))["temp_delta"]
-                
-                msg = { 
-                 'temp_on' : param.temp_on,
-                 'temp_delta' : param.temp_delta
-                        }
-                msg = json.dumps(msg)
-                
-                client.publish("param", msg, QOS, retain=True)
-            
-            # if temp_on_new != param.temp_on:
-            
-            #     param.temp_on = json.loads(
-            #         str(message.payload.decode()))["temp_on"]
-            #     param.temp_delta = json.loads(str(message.payload.decode()))["temp_delta"]
-            #     print(f"запись в переменные контроллера temp_on={param.temp_on}")
-                
-                
-            #     msg = { 
-            #         'temp_on' : param.temp_on,
-            #         'temp_delta' : param.temp_delta
-            #             }
-            #     msg = json.dumps(msg)
-            #     client.publish("param", msg, QOS, retain=True)
             
   
     client = mqtt_client.Client(client_id, clean_session=False)
@@ -151,35 +167,39 @@ def connect_mqtt() -> mqtt_client:
 
 def publish(client):
     mes_old={}
+    m = CompareDist()
 
 # ---------------------------    
-    msg = { 
-           'temp_on' : param.temp_on,
-           'temp_delta' : param.temp_delta
-    }
-    msg = json.dumps(msg)
-    result = client.publish("param", msg, QOS, retain=True)
-    status = result[0]
-    if status == 0:
-        print(f"параметры отправлены  `{msg}` to topic `param`")
-    else:
-        print(f"Failed to send message to topic {topic}")
+
+    # msg = json.dumps(param.msgParam)
+    # result = client.publish(topic_param, msg, 0, retain=True)
+    # status = result[0]
+    # if status == 0:
+    #     print(f"параметры отправлены  `{msg}` to topic {topic_param}`")
+    # else:
+    #     print(f"Failed to send message to topic {topic}")
  #---------------------------------   
     
     while True:
        
-        print(f"проверка temp_on={param.temp_on}")
+        print(f"проверка temp_on={param.timeReleWork}")
        
         temp = random.randint(20, 30)
-        # temp = 1
+        #temp = 1
         
         time.sleep(10)
         msg = {"temperatura": temp, "humidity": 50,
                "coolState": True, "releState": False}
+        
+        # ------------------------------
+        qqq = m.comparemes(msg)
+        print(f" m.comparemes = {qqq} ")
+            
+        # ______________________________
        
         # проверка изменения сообщения
-        if not compare_dict(msg, mes_old):
-            mes_old = msg.copy()
+        if qqq == False:
+            print(f" m.comparemes_____________ = {qqq} ")
 
             now = datetime.datetime.now()
             msg["datastamp"] = now.strftime('%d.%m.%Y %H:%M:%S')
@@ -208,7 +228,7 @@ def publish(client):
             
 def run():
     client = connect_mqtt()
-    client.subscribe("param", qos=0)
+    client.subscribe(topic_param, qos=0)
     try:
         client.loop_start()
         # client.loop_forever()
