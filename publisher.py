@@ -20,19 +20,22 @@ QOS = 1
 client_id = f'python-mqtt-{random.randint(0, 100)}'
 # --------------------
 
-class CompareDist:
+class MsgSendTime:
     def __init__(self) -> None:
         self._mesOld = {}
         
-    def comparemes(self, mesnew):
+    def __comparemes(self, mesnew):
         if self._mesOld != mesnew:
             self._mesOld = mesnew.copy()
             return False
         return True
         
+
+    
     def timeStampMsg(self, mesnew):
-        if self._mesOld != mesnew:
-            self._mesOld = mesnew.copy()   
+        
+        if self.__comparemes(mesnew) !=True:
+            
             now = datetime.datetime.now()
             mesnew["datastamp"] = now.strftime('%d.%m.%Y %H:%M:%S')
             return mesnew
@@ -170,8 +173,7 @@ def connect_mqtt() -> mqtt_client:
 
 
 def publish(client):
-    mes_old={}
-    m = CompareDist()
+    msgSendTime = MsgSendTime()
 
 # ---------------------------    
 
@@ -188,17 +190,17 @@ def publish(client):
        
         print(f"проверка temp_on={param.timeReleWork}")
        
-        temp = random.randint(20, 30)
-        # temp = 1
+        # temp = random.randint(20, 30)
+        temp = 1
         
         time.sleep(10)
         msg = {"temperatura": temp, "humidity": 50,
                "coolState": True, "releState": False}
         
         # ------------------------------
-        val = m.timeStampMsg(msg)
-        print(f" m = {val} ")
-            
+        val = msgSendTime.timeStampMsg(msg)
+        print(f" m1 = {val} ")
+       
         # ______________________________
        
         # проверка изменения сообщения

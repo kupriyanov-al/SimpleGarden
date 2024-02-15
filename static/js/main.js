@@ -31,7 +31,7 @@ window.onload = function () {
     }
    
     
-    
+   
 
     // var myModal = document.getElementById('staticBackdrop1')
     // myModal.addEventListener('shown.bs.modal', function () {
@@ -76,6 +76,10 @@ function imposeMinMax(el){
       }
     }
 }
+
+
+
+
 
     
     

@@ -32,8 +32,8 @@ document.getElementById('datend').value = datend;
 
 console.log(clientId);
 
-client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),"", clientId)
-//client = new Paho.MQTT.Client("test.mosquitto.org", Number(8081), "", clientId)
+//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),"", clientId)
+client = new Paho.MQTT.Client("test.mosquitto.org", Number(8081), "", clientId)
 
 // set callback handlers
 client.onConnectionLost = onConnectionLost;
@@ -46,10 +46,14 @@ function onConnect() {
   console.log("onConnect");
   client.subscribe("rasp1", qos = 0);
   client.subscribe(topic_param, qos = 0); 
-  document.getElementById("formInputTemp").disabled = false
-  document.getElementById("formInputTempDelta").disabled = false
-  document.getElementById("formInputTimeRele").disabled = false
-  document.getElementById("formInputTimeReleWork").disabled = false
+  // Устанавливаем disabled для формы настроек
+
+  // Разблокируем все поля если  connect
+  const fields = document.querySelectorAll('#formInput input');
+  for (var i = 0; i < fields.length; i++) {
+    fields[i].disabled = false;
+  }
+  document.getElementById("btnParamSend").disabled = false
 
   
 }
@@ -111,10 +115,15 @@ else
 function onConnectionLost(responseObject) {
   if (responseObject.errorCode !== 0) {
     console.log("onConnectionLost:"+responseObject.errorMessage);
-    document.getElementById("formInputTemp").disabled = true
-    document.getElementById("formInputTempDelta").disabled = true
-    document.getElementById("formInputTimeRele").disabled = true
-    document.getElementById("formInputTimeReleWork").disabled = true
+    
+   
+    // Блокируем все поля если ошибка при connect
+    const fields = document.querySelectorAll('#formInput input');
+    for (var i = 0; i < fields.length; i++) {
+      fields[i].disabled = true;
+    }
+    document.getElementById("btnParamSend").disabled = true
+
   }
   
 }
