@@ -190,8 +190,8 @@ def publish(client):
        
         print(f"проверка temp_on={param.timeReleWork}")
        
-        # temp = random.randint(20, 30)
-        temp = 1
+        temp = random.randint(20, 30)
+        temp = temp*1.23
         
         time.sleep(10)
         msg = {"temperatura": temp, "humidity": 50,
