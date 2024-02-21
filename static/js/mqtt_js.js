@@ -32,8 +32,9 @@ document.getElementById('datend').value = datend;
 
 console.log(clientId);
 
-client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),"", clientId)
-//client = new Paho.MQTT.Client("test.mosquitto.org", Number(8081), "", clientId)
+//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),"", clientId)
+client = new Paho.MQTT.Client("test.mosquitto.org", Number(8081), "", clientId)
+//client = new Paho.MQTT.Client("test.mosquitto.org", Number(1884), "", clientId)
 
 // set callback handlers
 client.onConnectionLost = onConnectionLost;
@@ -135,6 +136,7 @@ client.connect(
   cleanSession: false,
   onSuccess: onConnect,
   onFailure: onConnectionLost,
+  'useSSL': false,
   keepAliveInterval: 120,
   reconnect : true,         // Enable automatic reconnect
   
@@ -155,7 +157,7 @@ function fetchMonitoring() {
 
 function clearDataChart() {
   myChart.data.labels = []
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < myChart.data.datasets.length; i++) {
     myChart.data.datasets[i].data = []
   }
 }
@@ -243,20 +245,22 @@ function showdata(data, prd) {
     if (prd){    
       if (myChart.data.datasets[0].data.length > 100) {
         myChart.data.labels.shift();
-        for (let i = 0; i < 3; i++) { 
+        for (let i = 0; i < myChart.data.datasets.length; i++) { 
           myChart.data.datasets[i].data.shift();
         
         }
       }
     
   }
-    for (let i = 0; i < 3; i++) { // устанавливаем у графика шкалу
+    for (let i = 0; i < 2; i++) { // устанавливаем у графика шкалу
       maxValue = Math.max.apply(null, myChart.data.datasets[i].data);
       minValue = Math.min.apply(null, myChart.data.datasets[i].data);
       myChart.options.scales.yAxes[i].ticks.max = maxValue + 0.1
       myChart.options.scales.yAxes[i].ticks.min = minValue - 0.1
     }
     
+
+ 
    
     myChart.update();
     
@@ -321,7 +325,7 @@ var myChart = new Chart(canvas, {
         yAxisID: 'C',
         data: [],
         steppedLine: true,
-        label: "Освещение",
+        label: "Вентилятор",
         borderColor: "#fc1d42",
         backgroundColor: "#71d1bd",
         fill: false,
@@ -333,7 +337,7 @@ var myChart = new Chart(canvas, {
         yAxisID: 'D',
         data: [],
         steppedLine: true,
-        label: "Вентилятор",
+        label: "Освещение",
         borderColor: "#0eec51",
         backgroundColor: "#71d1bd",
         fill: false,

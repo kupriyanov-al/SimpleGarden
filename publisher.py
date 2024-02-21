@@ -195,7 +195,7 @@ def publish(client):
         
         time.sleep(10)
         msg = {"temperatura": temp, "humidity": 50,
-               "coolState": True, "releState": False}
+               "coolState": False, "releState": False}
         
         # ------------------------------
         val = msgSendTime.timeStampMsg(msg)
