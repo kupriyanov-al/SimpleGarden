@@ -14524,3 +14524,4 @@ env/lib/python3.9/site-packages/rest_framework/utils/__pycache__/model_meta.cpyt
 env/lib/python3.9/site-packages/rest_framework/utils/__pycache__/representation.cpython-39.pyc
 env/lib/python3.9/site-packages/rest_framework/utils/__pycache__/serializer_helpers.cpython-39.pyc
 env/lib/python3.9/site-packages/rest_framework/utils/__pycache__/urls.cpython-39.pyc
+db.sqlite3

@@ -32,14 +32,28 @@ document.getElementById('datend').value = datend;
 
 console.log(clientId);
 
-//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),"", clientId)
-client = new Paho.MQTT.Client("test.mosquitto.org", Number(8081), "", clientId)
+//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),'', "", clientId)
+client = new Paho.MQTT.Client(mqtt_server, Number(8081),  "", clientId)
 //client = new Paho.MQTT.Client("test.mosquitto.org", Number(1884), "", clientId)
-
+console.log(client);
 // set callback handlers
 client.onConnectionLost = onConnectionLost;
 client.onMessageArrived = onMessageArrived;
-client.onD
+
+client.connect(
+  {
+    cleanSession: false,
+    onSuccess: onConnect,
+    onFailure: onConnectionLost,
+
+    'useSSL': false,
+    keepAliveInterval: 120,
+    reconnect: true,         // Enable automatic reconnect
+
+  }
+);
+
+
 
 // called when the client connects
 function onConnect() {
@@ -131,17 +145,6 @@ function onConnectionLost(responseObject) {
 
 
 
-client.connect(
-{
-  cleanSession: false,
-  onSuccess: onConnect,
-  onFailure: onConnectionLost,
-  'useSSL': false,
-  keepAliveInterval: 120,
-  reconnect : true,         // Enable automatic reconnect
-  
- }
-);
 
 
 
