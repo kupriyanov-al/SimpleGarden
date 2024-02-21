@@ -1,3 +1,23 @@
+import datetime
+
+class MsgSendTime:
+    def __init__(self) -> None:
+        self._mesOld = {}
+
+    def __comparemes(self, mesnew):
+        if self._mesOld != mesnew:
+            self._mesOld = mesnew.copy()
+            return False
+        return True
+
+    def timeStampMsg(self, mesnew):
+
+        if self.__comparemes(mesnew) != True:
+
+            now = datetime.datetime.now()
+            mesnew["datastamp"] = now.strftime('%d.%m.%Y %H:%M:%S')
+            return mesnew
+        return False
 
 
 class ParamSetup:
@@ -48,3 +68,6 @@ class ParamSetup:
     @msgParam.setter
     def msgParam(self, x):
         self._msgParam = x
+
+
+
