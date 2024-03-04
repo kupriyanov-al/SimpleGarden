@@ -212,7 +212,7 @@ btnQuery.onclick = function () {
   
   // var datend = document.getElementById('datend');
   //производим  действия document.URL
-  fetch('http://127.0.0.1:8000/home/'+datest+'/'+datend+'')
+  fetch('/home/'+datest+'/'+datend+'')
   // fetch('http://127.0.0.1:8000/home/01.11.2023/09.12.2023')
     .then(response => response.json())
     .then(data => showdata(data, false));
