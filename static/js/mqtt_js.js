@@ -350,6 +350,8 @@ var myChart = new Chart(canvas, {
   ]
   },
   options: {
+    responsive: true,
+    maintainAspectRatio: false,
     title: {
           display: true,
           text: 'Тренды'
@@ -359,16 +361,15 @@ var myChart = new Chart(canvas, {
         display: true,
         scaleLabel: {
           display: true,
-          labelString: 'Time'
+          labelString: 'Time',
+         
         },
         ticks: {
           autoSkip: true,
-          
-          //maxTicksLimit: 20,
-          // max:3,
-          // min:3,
-
-          
+          fontSize: 10,
+          maxTicksLimit: 20,
+          minRotation: 90
+                    
         }
       }],
       yAxes: [{

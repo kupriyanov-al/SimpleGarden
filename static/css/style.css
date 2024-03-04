@@ -127,7 +127,9 @@ a {
    
 }
 
-
+.trend {
+    height: 100%;
+}
 
 
 @media (max-width: 992px)  { 
@@ -173,6 +175,15 @@ a {
     .modal-content {
         font-size: 10px ! important;
     }
+
+        .trend {
+            height: 100%;
+        }
+
+    /* .myChartClass {
+        width: 100% ! important;
+        height: auto ! important;
+    } */
 }
 /* footer--------------- */
 .footer-title {
