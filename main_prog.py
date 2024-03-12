@@ -11,8 +11,8 @@ import queue
  # === Инициализация пинов ===
 pin=11
 DHT_PIN = 4
-COOL_PIN = 8
-relePin = 22
+COOL_PIN = 17
+relePin = 27
     
 DHT_SENSOR = Adafruit_DHT.DHT22
 GPIO.setmode(GPIO.BOARD)                
