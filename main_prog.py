@@ -184,15 +184,14 @@ def connect_mqtt() -> mqtt_client:
 
 def get_temp_hum():
     humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
+    
     if humidity is not None and temperature is not None:
-        temperature = round(temperature,2)
-        humidity = round(humidity,1)
-            
-         # temperature = round(temperature /0.25)*0.25 #
-        # humidity = round(humidity/5)*5
-            
-        DHT={'humidity':humidity,'temperature':temperature}        
-    return DHT
+        if  (0 <= humidity < 100) and (0 <= temperature < 100):
+            temperature = round(temperature,2)
+            humidity = round(humidity,1)
+            DHT={'humidity':humidity,'temperature':temperature}        
+            return DHT
+    return False
 
 
 def publish(client):
@@ -224,7 +223,12 @@ def publish(client):
         print(param.temp_delta) 
         
         # -------------
-        DHT=get_temp_hum()
+        try:
+            DHT=get_temp_hum()
+            if DHT == False:
+                continue
+        except Exception as err:
+            print(f"DHT err: {err}")
               
         if DHT['temperature']>param.temp_on and not CoolState or DHT['temperature']<param.temp_on-param.temp_delta and CoolState:
             CoolState=not CoolState

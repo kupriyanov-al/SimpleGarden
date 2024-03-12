@@ -12,5 +12,6 @@ def recdb(datastamp, temperatura, humidity, coolState, releState):
   try:
     recordDB.save()
   except Exception as err:
-    raise Exception(f'Ошибка записи в БД. Info: {err}')
+    print(err)
+    # raise Exception(f'Ошибка записи в БД. Info: {err}')
     
