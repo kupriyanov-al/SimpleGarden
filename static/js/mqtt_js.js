@@ -8,7 +8,8 @@ let temperatura = 0;
 let humidity = 0;
 let datastamp="";
 let clientId = makeid(5);
-let topic_param = "param1";
+let topic_param = "param";
+let topic = "rasp3"
 
 
 var btnQuery = document.getElementById('btnQuery');
@@ -59,7 +60,7 @@ client.connect(
 function onConnect() {
   // Once a connection has been made, make a subscription and send a message.
   console.log("onConnect");
-  client.subscribe("rasp1", qos = 0);
+  client.subscribe(topic, qos = 0);
   client.subscribe(topic_param, qos = 0); 
   // Устанавливаем disabled для формы настроек
 
@@ -212,7 +213,7 @@ btnQuery.onclick = function () {
   
   // var datend = document.getElementById('datend');
   //производим  действия document.URL
-  fetch('http://127.0.0.1:8000/home/'+datest+'/'+datend+'')
+  fetch('/home/'+datest+'/'+datend+'')
   // fetch('http://127.0.0.1:8000/home/01.11.2023/09.12.2023')
     .then(response => response.json())
     .then(data => showdata(data, false));

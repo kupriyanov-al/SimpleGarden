@@ -6,7 +6,7 @@ import json
 
 broker_url = "test.mosquitto.org"
 broker_port = 1883
-
+topic = "rasp3"
 
 def on_connect(client, userdata, flags, rc):
    print(f"Соединение с сервером mqtt: {broker_url}")
@@ -14,7 +14,7 @@ def on_connect(client, userdata, flags, rc):
         print(
            f"Соединение OK: {rc}")
         try:
-            client.subscribe("rasp1", qos=0)
+            client.subscribe(topic, qos=0)
         except:
             print("err!")
 
@@ -46,5 +46,5 @@ client.on_message = on_message
 client.on_disconnect = on_disconnect
 client.connect(broker_url, broker_port)
 
-client.subscribe("rasp1", qos=0)
+client.subscribe(topic, qos=0)
 

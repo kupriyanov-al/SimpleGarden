@@ -13,8 +13,8 @@ q = queue.Queue()
 # -------------------------
 broker = 'test.mosquitto.org'
 port = 1883
-topic = "rasp1"
-topic_param = "param1"
+topic = "rasp3"
+topic_param = "param"
 QOS = 1
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
@@ -191,10 +191,10 @@ def publish(client):
         print(f"проверка temp_on={param.timeReleWork}")
        
         temp = random.randint(20, 30)
-        temp = temp*1.23
+        # temp = temp*1.1
         
         time.sleep(10)
-        msg = {"temperatura": temp, "humidity": 50,
+        msg = {"temperatura": temp, "humidity": 150,
                "coolState": True, "releState": False}
         
         # ------------------------------
