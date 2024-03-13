@@ -33,8 +33,8 @@ document.getElementById('datend').value = datend;
 
 console.log(clientId);
 
-//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080),'', "", clientId)
-client = new Paho.MQTT.Client(mqtt_server, Number(8081),  "", clientId)
+client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080), "", clientId)
+//client = new Paho.MQTT.Client(mqtt_server, Number(8081),  "", clientId)
 //client = new Paho.MQTT.Client("test.mosquitto.org", Number(1884), "", clientId)
 console.log(client);
 // set callback handlers
