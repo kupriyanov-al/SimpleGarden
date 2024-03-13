@@ -5,6 +5,12 @@ import json
 import time, datetime
 from paho.mqtt import client as mqtt_client
 import queue
+from logg import *
+
+
+
+
+logger.debug('**************')
 
 # Буффер
 q = queue.Queue()
