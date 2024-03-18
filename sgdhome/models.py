@@ -15,4 +15,3 @@ class DBTelemetry( models.Model):
     def __str__(self):
         return (f"datastamp={self.datastamp}. temperatura= {self.temperatura}.humidity ={self.humidity} coolState = {self.coolState} releState = {self.releState}")
  
- 

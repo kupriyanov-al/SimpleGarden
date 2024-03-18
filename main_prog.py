@@ -177,7 +177,7 @@ def connect_mqtt() -> mqtt_client:
     client.on_publish = on_publish
     client.on_disconnect = on_disconnect
     client.on_message = on_message
-    client.connect(broker, port)  # 
+    client.connect(broker, port)  
     
     return client
 
