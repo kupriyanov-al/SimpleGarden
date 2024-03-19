@@ -6,19 +6,21 @@ import json
 import time, datetime
 from paho.mqtt import client as mqtt_client
 import queue
-
+from log_proc import *
 
  # === Инициализация пинов ===
-pin=11
+logger.debug('******START******')
+
 DHT_PIN = 4
-COOL_PIN = 17
-relePin = 27
-    
+COOL_PIN = 14
+relePin = 15
+
+GPIO.setmode(GPIO.BCM)
 DHT_SENSOR = Adafruit_DHT.DHT22
-GPIO.setmode(GPIO.BOARD)                
-GPIO.setup(pin, GPIO.OUT, initial=0)
-GPIO.setup(COOL_PIN, GPIO.OUT, initial=0)
-GPIO.setup(relePin, GPIO.OUT, initial=0)
+               
+#GPIO.setup(pin, GPIO.OUT, initial=0)
+GPIO.setup(COOL_PIN, GPIO.OUT, initial=1)
+GPIO.setup(relePin, GPIO.OUT, initial=1)
 
 
 # Буффер
@@ -64,7 +66,7 @@ class ParamSetup:
         self._msgParam = {
             'temp_on': 25,
             'temp_delta': 0.2,
-            'timeRele': "21:00",
+            'timeRele': "22:23",
             'timeReleWork' : 30
         }
         
@@ -118,14 +120,12 @@ param = ParamSetup()
 
 def connect_mqtt() -> mqtt_client:
     
-    def on_connect(client, userdata, flags, rc):
-        print(f"on_connect flags={flags} , rc={rc}")
-        
-        if rc == 0:
-            print("Connected to MQTT Broker!")
+    def on_connect(client, userdata, flags, rc):        
+        if rc == 0:            
+            logger.debug('Connected to MQTT Broker!')
             client.connected_flag = True
         else:
-            print("Failed to connect, return code ", rc)
+            logger.debug("Failed to connect, return code ", rc)
             client.reconnect()
 
     def on_publish(client, userdata, mid):
@@ -134,22 +134,19 @@ def connect_mqtt() -> mqtt_client:
     def on_disconnect(client, userdata, rc):
         client.connected_flag = False
         if rc != 0:
-            print("Unexpected disconnection. Reconnecting...")
+            logger.debug("Unexpected disconnection. Reconnecting...")
             try:
                 client.reconnect()
             except:
-              print("Disconnected")
+              logger.debug("Disconnected")
         else:
-            print("Disconnected successfully")
+            logger.debug("Disconnected successfully")
  
     
     def on_message(client, userdata, message):
-        if message.topic == topic_param:
-            print("запись в переменные контроллера")
-            
-            
+        if message.topic == topic_param:            
             if param.msgParam!=json.loads(str(message.payload.decode())):
-                print("111111111")
+               
                 print(param.msgParam)
                 print(json.loads(str(message.payload.decode())))
                 param.msgParam=json.loads(str(message.payload.decode()))                         
@@ -160,12 +157,10 @@ def connect_mqtt() -> mqtt_client:
                 
                 status = result[0]
                 if status == 0:
-                    print(f"send pub `{msg}` to topic {topic_param}`")
+                    logger.debug(f"send pub {msg} to topic {topic_param}")
                 else:
-                    print(f"Failed to send message to topic {topic}")
-               
-            
-            
+                    logger.debug(f"Failed to send message to topic {topic}")
+                    
   
     client = mqtt_client.Client(client_id, clean_session=False)
 
@@ -177,22 +172,20 @@ def connect_mqtt() -> mqtt_client:
     client.on_publish = on_publish
     client.on_disconnect = on_disconnect
     client.on_message = on_message
-    client.connect(broker, port)  
+    client.connect(broker, port)  # 
     
     return client
 
 
 def get_temp_hum():
     humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
-    
     if humidity is not None and temperature is not None:
-        if  (0 <= humidity < 100) and (0 <= temperature < 100):
+        if (0 < humidity < 100) and (0 < humidity < 100): 
             temperature = round(temperature,2)
             humidity = round(humidity,1)
             DHT={'humidity':humidity,'temperature':temperature}        
             return DHT
     return False
-
 
 def publish(client):
     msgSendTime = MsgSendTime()
@@ -210,29 +203,16 @@ def publish(client):
  #---------------------------------   
     
     while True:
-       
-        print(f"проверка temp_on={param.timeReleWork}")
-       
-        # temp = random.randint(20, 30)
-        temp = 1
-        
-        time.sleep(5)
-        
-        print('param.temp_on')
-        print(param.temp_on)
-        print(param.temp_delta) 
-        
-        # -------------
-        try:
-            DHT=get_temp_hum()
-            if DHT == False:
-                continue
-        except Exception as err:
-            print(f"DHT err: {err}")
+        temp = 1        
+        time.sleep(10)
+
+        DHT=get_temp_hum()
+        if DHT == False:
+            continue
               
         if DHT['temperature']>param.temp_on and not CoolState or DHT['temperature']<param.temp_on-param.temp_delta and CoolState:
             CoolState=not CoolState
-            GPIO.output(COOL_PIN, CoolState)
+            GPIO.output(COOL_PIN, not CoolState)
                
         
         time_obj = time.strptime(param.timeRele, "%H:%M") # преобразование времени в объект 
@@ -242,56 +222,44 @@ def publish(client):
         seconds = (now  - todayon).total_seconds()
         if now >= todayon and seconds < param.timeReleWork and not ReleState or now > todayon and seconds > param.timeReleWork and ReleState:
             ReleState = not ReleState
-            GPIO.output(relePin, ReleState)
+            GPIO.output(relePin, not ReleState)
             #print(ReleState)
-        
-        # TODO: изменить дельту на 1 градус 
-    
+         
         temperature = round(DHT['temperature'] /1)*1
         
         
-        temperature = round(DHT['temperature'] ,3)
+        #temperature = round(DHT['temperature'] ,3)
         
-        humidity = round(DHT['humidity']/5)*5
+        humidity = round(DHT['humidity']/10)*10
         
         # temperature = DHT['temperature'] 
         # humidity = DHT['humidity']
             
         msg = {"temperatura": temperature, "humidity": humidity, "coolState": CoolState, "releState": ReleState}
-        # ----------------------
-        
-        
-        
-        # ------------------------------
+
         val = msgSendTime.timeStampMsg(msg)
-        print(f" m1 = {val} ")
-       
-        # ______________________________
-       
+
         # проверка изменения сообщения
-        if val != False:
-            print(f" m.comparemes_____________ = {val} ")  
+        if val != False:           
 
             # Записываем в стек
             q.put(json.dumps(val))  
-
-            print(f"connected_flag={client.connected_flag}")
         
             if client.connected_flag:
                 while not q.empty():
                     msg=q.get()
-                    result = client.publish(topic, msg, QOS)
+                    result = client.publish(topic, msg, QOS, retain=True)
                     status = result[0]
                     if status == 0:
-                        print(f"Отправлено сообщение `{msg}` to topic `{topic}`") 
+                        logger.debug(f"Send MQTT message {msg} to topic {topic}")
                     else:
-                        print(f"Failed to send message to topic {topic}")
+                        logger.debug(f"Failed to send message to topic {topic}")
                     time.sleep(0.5)
             else:
                 try:
                     client.reconnect()
                 except:
-                    print("reconnect error...")
+                    logger.error("reconnect error...")
             
 def run():
     client = connect_mqtt()
@@ -301,8 +269,7 @@ def run():
         # client.loop_forever()
         publish(client)
     except Exception as err:
-        print(f"Error loop_start: {err}")
-    
+        logger.error(f"Error loop_start: {err}")
     
 
 
