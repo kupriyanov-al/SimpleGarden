@@ -5,7 +5,7 @@ import json
 import time, datetime
 from paho.mqtt import client as mqtt_client
 import queue
-from logg import *
+from log_proc import *
 
 
 
@@ -140,7 +140,7 @@ def connect_mqtt() -> mqtt_client:
     def on_message(client, userdata, message):
         if message.topic == topic_param:
             print("запись в переменные контроллера")
-            
+            logger.debug('*******запись в переменные контроллера*******')
             
             if param.msgParam!=json.loads(str(message.payload.decode())):
                 print("111111111")
@@ -195,6 +195,7 @@ def publish(client):
     while True:
        
         print(f"проверка temp_on={param.timeReleWork}")
+        logger.debug('*******проверка temp_on*******')
        
         temp = random.randint(20, 30)
         # temp = temp*1.1
