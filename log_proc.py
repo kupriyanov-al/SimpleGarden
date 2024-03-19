@@ -17,9 +17,11 @@ LOGGING_CONFIG = {
     'handlers': {
        
         'FileHandler': {
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'default_formatter',
-            "filename": "main_log.log"
+            "filename": "main_log.log",
+            'maxBytes': 1024, 
+            'backupCount': 5,  # 5 файлов  
         },
         
         'stream_handler': {
@@ -47,7 +49,6 @@ LOGGING_CONFIG = {
 
 
 
-#todo ssss
 
 
 

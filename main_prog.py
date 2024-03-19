@@ -244,8 +244,10 @@ def publish(client):
             ReleState = not ReleState
             GPIO.output(relePin, ReleState)
             #print(ReleState)
-         
-        temperature = round(DHT['temperature'] /0.3)*0.3
+        
+        # TODO: изменить дельту на 1 градус 
+    
+        temperature = round(DHT['temperature'] /1)*1
         
         
         temperature = round(DHT['temperature'] ,3)
