@@ -12,15 +12,15 @@ from log_proc import *
 logger.debug('******START******')
 
 DHT_PIN = 4
-COOL_PIN = 14
-relePin = 15
+COOL_PIN = 14 
+RELE_PIN = 15
 
 GPIO.setmode(GPIO.BCM)
 DHT_SENSOR = Adafruit_DHT.DHT22
                
 #GPIO.setup(pin, GPIO.OUT, initial=0)
 GPIO.setup(COOL_PIN, GPIO.OUT, initial=1)
-GPIO.setup(relePin, GPIO.OUT, initial=1)
+GPIO.setup(RELE_PIN, GPIO.OUT, initial=1)
 
 
 # Буффер
@@ -209,6 +209,7 @@ def publish(client):
         DHT=get_temp_hum()
         if DHT == False:
             continue
+         
               
         if DHT['temperature']>param.temp_on and not CoolState or DHT['temperature']<param.temp_on-param.temp_delta and CoolState:
             CoolState=not CoolState
@@ -222,7 +223,7 @@ def publish(client):
         seconds = (now  - todayon).total_seconds()
         if now >= todayon and seconds < param.timeReleWork and not ReleState or now > todayon and seconds > param.timeReleWork and ReleState:
             ReleState = not ReleState
-            GPIO.output(relePin, not ReleState)
+            GPIO.output(RELE_PIN, not ReleState)
             #print(ReleState)
          
         temperature = round(DHT['temperature'] /1)*1
