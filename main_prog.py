@@ -7,6 +7,9 @@ import time, datetime
 from paho.mqtt import client as mqtt_client
 import queue
 from log_proc import *
+from re import findall                      # Импортируем библиотеку по работе с регулярными выражениями
+from subprocess import check_output         # Импортируем библиотеку по работе с внешними процессами
+
 
  # === Инициализация пинов ===
 logger.debug('******START******')
@@ -14,14 +17,16 @@ logger.debug('******START******')
 DHT_PIN = 4
 COOL_PIN = 14 
 RELE_PIN = 15
+COOL_PROC_PIN = 23
+
 
 GPIO.setmode(GPIO.BCM)
 DHT_SENSOR = Adafruit_DHT.DHT22
                
 #GPIO.setup(pin, GPIO.OUT, initial=0)
-GPIO.setup(COOL_PIN, GPIO.OUT, initial=1)
-GPIO.setup(RELE_PIN, GPIO.OUT, initial=1)
-
+GPIO.setup(COOL_PIN, GPIO.OUT, initial=0)
+GPIO.setup(RELE_PIN, GPIO.OUT, initial=0)
+GPIO.setup(COOL_PROC_PIN, GPIO.OUT, initial=0)
 
 # Буффер
 q = queue.Queue()
@@ -113,7 +118,11 @@ class ParamSetup:
 
 param = ParamSetup()
 
-
+# температура процессора
+def get_temp():
+    temp = check_output(["vcgencmd","measure_temp"]).decode()    # Выполняем запрос температуры
+    temp = float(findall('\d+\.\d+', temp)[0])                   # Извлекаем при помощи регулярного выражения значение температуры из строки "temp=47.8'C"
+    return(temp)                            # Возвращаем результат
 
 
 
@@ -191,6 +200,7 @@ def publish(client):
     msgSendTime = MsgSendTime()
     ReleState = False
     CoolState = False
+    CoolProcState = False
 # ---------------------------    
 
     # msg = json.dumps(param.msgParam)
@@ -206,14 +216,22 @@ def publish(client):
         temp = 1        
         time.sleep(10)
 
+        tempProc = get_temp()
+        
+        if tempProc > 60 and not CoolProcState or tempProc < 60 - 10 and CoolProcState:
+            CoolProcState = not CoolProcState         # Меняем статус состояния
+            GPIO.output(COOL_PROC_PIN, CoolProcState) # Задаем новый статус пину управления
+
+        
+        print(tempProc)
+
         DHT=get_temp_hum()
         if DHT == False:
             continue
-         
               
         if DHT['temperature']>param.temp_on and not CoolState or DHT['temperature']<param.temp_on-param.temp_delta and CoolState:
             CoolState=not CoolState
-            GPIO.output(COOL_PIN, not CoolState)
+            GPIO.output(COOL_PIN, CoolState)
                
         
         time_obj = time.strptime(param.timeRele, "%H:%M") # преобразование времени в объект 
@@ -223,10 +241,10 @@ def publish(client):
         seconds = (now  - todayon).total_seconds()
         if now >= todayon and seconds < param.timeReleWork and not ReleState or now > todayon and seconds > param.timeReleWork and ReleState:
             ReleState = not ReleState
-            GPIO.output(RELE_PIN, not ReleState)
+            GPIO.output(RELE_PIN, ReleState)
             #print(ReleState)
          
-        temperature = round(DHT['temperature'] /1)*1
+        temperature = round(DHT['temperature'] /0.5)*0.5
         
         
         #temperature = round(DHT['temperature'] ,3)
