@@ -18,6 +18,7 @@ DHT_PIN = 4
 COOL_PIN = 14 
 RELE_PIN = 15
 COOL_PROC_PIN = 23
+RELE_PIN_RAIN = 18 # включение реле на полив 
 
 
 GPIO.setmode(GPIO.BCM)
@@ -27,6 +28,7 @@ DHT_SENSOR = Adafruit_DHT.DHT22
 GPIO.setup(COOL_PIN, GPIO.OUT, initial=0)
 GPIO.setup(RELE_PIN, GPIO.OUT, initial=0)
 GPIO.setup(COOL_PROC_PIN, GPIO.OUT, initial=0)
+GPIO.setup(RELE_PIN_RAIN, GPIO.OUT, initial=0)
 
 # Буффер
 q = queue.Queue()
