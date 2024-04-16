@@ -221,7 +221,7 @@ def publish(client):
         # temp = 1        
         time.sleep(10)
 
-        tempProc = get_temp()
+        tempProc = get_temp() # температура процессора
         
         if tempProc > onTempProceccor and not CoolProcState or tempProc < onTempProceccor - 10 and CoolProcState:
             CoolProcState = not CoolProcState         # Меняем статус состояния

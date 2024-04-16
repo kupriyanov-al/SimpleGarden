@@ -148,10 +148,6 @@ function onConnectionLost(responseObject) {
 
 
 
-
-
-
-
 function fetchMonitoring() {
   // fetch(document.URL+'/home/db/')
   // fetch('http://127.0.0.1:8000/home/db/')

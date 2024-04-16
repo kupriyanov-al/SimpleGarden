@@ -6,7 +6,8 @@ class RecDB:
   
   old_temperatura, old_humidity, old_coolState, old_releState = None, None, None, None
   
-  def record(datastamp, temperatura, humidity, coolState, releState):
+  @classmethod
+  def record(cls, datastamp, temperatura, humidity, coolState, releState):
     
     recordDB = DBTelemetry(datastamp=datetime.strptime(datastamp, '%d.%m.%Y %H:%M:%S'),
                            temperatura=temperatura,
@@ -16,10 +17,10 @@ class RecDB:
     
     # print(f"old_temperatura={RecDB.old_temperatura}")
     try:
-      if (RecDB.old_temperatura != temperatura) or (RecDB.old_humidity!=humidity) or (RecDB.old_coolState!=coolState) or (RecDB.old_releState!=releState):
+      if (cls.old_temperatura != temperatura) or (cls.old_humidity != humidity) or (cls.old_coolState != coolState) or (cls.old_releState != releState):
         recordDB.save()
         # print("Запись в БД")
-      RecDB.old_temperatura, RecDB.old_humidity, RecDB.old_coolState, RecDB.old_releState = temperatura, humidity, coolState, releState
+      cls.old_temperatura, cls.old_humidity, cls.old_coolState, cls.old_releState = temperatura, humidity, coolState, releState
     except Exception as err:
       print(err)
 
