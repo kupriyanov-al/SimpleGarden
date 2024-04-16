@@ -8,8 +8,8 @@ let temperatura = 0;
 let humidity = 0;
 let datastamp="";
 let clientId = makeid(5);
-let topic_param = "param";
-let topic = "rasp3"
+let topic_param = "paramTest";
+let topic = "raspTest"
 
 
 var btnQuery = document.getElementById('btnQuery');
@@ -33,7 +33,8 @@ document.getElementById('datend').value = datend;
 
 console.log(clientId);
 
-client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080), "", clientId)
+//client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8080), "", clientId) // для сервера
+client = new Paho.MQTT.Client("test.mosquitto.org" ,Number(8081), "", clientId) // для теста
 //client = new Paho.MQTT.Client(mqtt_server, Number(8081),  "", clientId)
 //client = new Paho.MQTT.Client("test.mosquitto.org", Number(1884), "", clientId)
 console.log(client);
@@ -103,7 +104,7 @@ else
   humidity = mes['humidity'];
   coolState = mes['coolState'];
   releState = mes['releState'];
-
+  tempProc = mes['tempProc'];
   datastamp = mes['datastamp'];
 
 
@@ -115,6 +116,7 @@ else
   document.getElementById("humidity").innerHTML = humidity;
   document.getElementById("coolState").innerHTML = coolState_onoff;
   document.getElementById("releState").innerHTML = releState_onoff;
+  document.getElementById("tempProc").innerHTML = tempProc;
   document.getElementById("datastamp").innerHTML = datastamp;
   
   let data=[];

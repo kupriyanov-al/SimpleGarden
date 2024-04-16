@@ -1,12 +1,12 @@
 
 import paho.mqtt.client as mqtt
-from .procDB import recdb
+from .procDB import RecDB #recdb
 
 import json
 
 broker_url = "test.mosquitto.org"
 broker_port = 1883
-topic = "rasp3"
+topic = "raspTest"
 
 def on_connect(client, userdata, flags, rc):
    print(f"Соединение с сервером mqtt: {broker_url}")
@@ -33,9 +33,13 @@ def on_message(client, userdata, message):
    rec = json.loads(str(message.payload.decode()))
   
    # функция записи в БД в модуле procDB
-   recdb(rec['datastamp'], rec['temperatura'],
-         rec['humidity'], rec['coolState'], rec['releState'])
-   print(rec)
+#    recdb(rec['datastamp'], rec['temperatura'],
+#          rec['humidity'], rec['coolState'], rec['releState'])
+#    print(rec)
+   
+   RecDB.record(rec['datastamp'], rec['temperatura'],
+                rec['humidity'], rec['coolState'], rec['releState'])
+   
    
    
    

@@ -20,6 +20,7 @@ RELE_PIN = 15
 COOL_PROC_PIN = 23
 RELE_PIN_RAIN = 18 # включение реле на полив 
 
+onTempProceccor = 60 # температура включения охлаждения процессора
 
 GPIO.setmode(GPIO.BCM)
 DHT_SENSOR = Adafruit_DHT.DHT22
@@ -124,6 +125,8 @@ param = ParamSetup()
 def get_temp():
     temp = check_output(["vcgencmd","measure_temp"]).decode()    # Выполняем запрос температуры
     temp = float(findall('\d+\.\d+', temp)[0])                   # Извлекаем при помощи регулярного выражения значение температуры из строки "temp=47.8'C"
+    temp = round(temp)  # округление до ближайшего целого
+    
     return(temp)                            # Возвращаем результат
 
 
@@ -215,12 +218,12 @@ def publish(client):
  #---------------------------------   
     
     while True:
-        temp = 1        
+        # temp = 1        
         time.sleep(10)
 
         tempProc = get_temp()
         
-        if tempProc > 60 and not CoolProcState or tempProc < 60 - 10 and CoolProcState:
+        if tempProc > onTempProceccor and not CoolProcState or tempProc < onTempProceccor - 10 and CoolProcState:
             CoolProcState = not CoolProcState         # Меняем статус состояния
             GPIO.output(COOL_PROC_PIN, CoolProcState) # Задаем новый статус пину управления
 
@@ -256,7 +259,8 @@ def publish(client):
         # temperature = DHT['temperature'] 
         # humidity = DHT['humidity']
             
-        msg = {"temperatura": temperature, "humidity": humidity, "coolState": CoolState, "releState": ReleState}
+        msg = {"temperatura": temperature, "humidity": humidity,
+               "coolState": CoolState, "releState": ReleState, "tempProc": tempProc}
 
         val = msgSendTime.timeStampMsg(msg)
 
