@@ -142,11 +142,9 @@ def connect_mqtt() -> mqtt_client:
     
     def on_message(client, userdata, message):
         if message.topic == topic_param:
-            print("запись в переменные контроллера")
             logger.debug('*******запись в переменные контроллера*******')
             
             if param.msgParam!=json.loads(str(message.payload.decode())):
-                print("111111111")
                 print(param.msgParam)
                 print(json.loads(str(message.payload.decode())))
                 param.msgParam=json.loads(str(message.payload.decode()))                         
