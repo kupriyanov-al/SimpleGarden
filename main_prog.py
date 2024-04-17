@@ -40,6 +40,7 @@ broker = 'test.mosquitto.org'
 port = 1883
 topic = "rasp1"
 topic_param = "param1"
+topicPrc = 'prc'
 QOS = 1
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
@@ -206,16 +207,22 @@ def publish(client):
     ReleState = False
     CoolState = False
     CoolProcState = False
+    __tempProc = 0
 # ---------------------------    
 
-    # msg = json.dumps(param.msgParam)
-    # result = client.publish(topic_param, msg, 0, retain=True)
-    # status = result[0]
-    # if status == 0:
-    #     print(f"параметры отправлены  `{msg}` to topic {topic_param}`")
-    # else:
-    #     print(f"Failed to send message to topic {topic}")
+    def sendMQTT(topic, msg, QOS):
+        result = client.publish(topic, msg, QOS, retain=True)
+        status = result[0]
+        if status == 0:
+            logger.debug(f"Send MQTT message {msg} to topic {topic}")
+        else:
+            logger.debug(f"Failed to send message to topic {topic}")
+        time.sleep(0.5)
  #---------------------------------   
+    
+    
+    
+    
     
     while True:
         # temp = 1        
@@ -223,12 +230,16 @@ def publish(client):
 
         tempProc = get_temp() # температура процессора
         
-        if tempProc > onTempProceccor and not CoolProcState or tempProc < onTempProceccor - 10 and CoolProcState:
+        if tempProc > onTempProceccor and not CoolProcState or tempProc < onTempProceccor - 5 and CoolProcState:
             CoolProcState = not CoolProcState         # Меняем статус состояния
             GPIO.output(COOL_PROC_PIN, CoolProcState) # Задаем новый статус пину управления
 
         
-        print(tempProc)
+        if (client.connected_flag) and (__tempProc != tempProc):
+                msg = json.dumps({"tempProc": tempProc})
+                sendMQTT(topicPrc, msg, QOS)
+        __tempProc = tempProc
+            
 
         DHT=get_temp_hum()
         if DHT == False:
@@ -260,7 +271,7 @@ def publish(client):
         # humidity = DHT['humidity']
             
         msg = {"temperatura": temperature, "humidity": humidity,
-               "coolState": CoolState, "releState": ReleState, "tempProc": tempProc}
+               "coolState": CoolState, "releState": ReleState}
 
         val = msgSendTime.timeStampMsg(msg)
 
@@ -273,13 +284,15 @@ def publish(client):
             if client.connected_flag:
                 while not q.empty():
                     msg=q.get()
-                    result = client.publish(topic, msg, QOS, retain=True)
-                    status = result[0]
-                    if status == 0:
-                        logger.debug(f"Send MQTT message {msg} to topic {topic}")
-                    else:
-                        logger.debug(f"Failed to send message to topic {topic}")
-                    time.sleep(0.5)
+                    sendMQTT(topic, msg, QOS)
+                    
+                    # result = client.publish(topic, msg, QOS, retain=True)
+                    # status = result[0]
+                    # if status == 0:
+                    #     logger.debug(f"Send MQTT message {msg} to topic {topic}")
+                    # else:
+                    #     logger.debug(f"Failed to send message to topic {topic}")
+                    # time.sleep(0.5)
             else:
                 try:
                     client.reconnect()

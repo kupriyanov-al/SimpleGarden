@@ -9,6 +9,7 @@ let humidity = 0;
 let datastamp="";
 let clientId = makeid(5);
 let topic_param = "paramTest";
+let topic_prc = "prc";
 let topic = "raspTest"
 
 
@@ -63,6 +64,7 @@ function onConnect() {
   console.log("onConnect");
   client.subscribe(topic, qos = 0);
   client.subscribe(topic_param, qos = 0); 
+  client.subscribe(topic_prc, qos = 0); 
   // Устанавливаем disabled для формы настроек
 
   // Разблокируем все поля если  connect
@@ -86,9 +88,14 @@ function onMessageArrived(message) {
   //console.log(mes)
   
 
+if (message.topic == topic_prc){ 
+  console.log("tempProc")
+  tempProc = mes['tempProc'];
+  document.getElementById("tempProc").innerHTML = tempProc;
   
+}
 // получены настройки параметров
-if (message.topic == topic_param){
+else if (message.topic == topic_param){
   document.getElementById("formInputTemp").value = mes['temp_on']
   document.getElementById("formInputTempDelta").value = mes['temp_delta']
   document.getElementById("formInputTimeRele").value = mes['timeRele']
@@ -103,8 +110,7 @@ else
   temperatura = mes['temperatura'];
   humidity = mes['humidity'];
   coolState = mes['coolState'];
-  releState = mes['releState'];
-  tempProc = mes['tempProc'];
+  releState = mes['releState']; 
   datastamp = mes['datastamp'];
 
 
@@ -116,7 +122,6 @@ else
   document.getElementById("humidity").innerHTML = humidity;
   document.getElementById("coolState").innerHTML = coolState_onoff;
   document.getElementById("releState").innerHTML = releState_onoff;
-  document.getElementById("tempProc").innerHTML = tempProc;
   document.getElementById("datastamp").innerHTML = datastamp;
   
   let data=[];

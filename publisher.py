@@ -21,10 +21,13 @@ broker = 'test.mosquitto.org'
 port = 1883
 topic = "raspTest"
 topic_param = "paramTest"
+topicPrc = 'prc'
 QOS = 1
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
 # --------------------
+
+
 
 class MsgSendTime:
     def __init__(self) -> None:
@@ -178,9 +181,12 @@ def connect_mqtt() -> mqtt_client:
 
 
 
+
+
+
 def publish(client):
     msgSendTime = MsgSendTime()
-
+    __tempProc = 0
 # ---------------------------    
 
     # msg = json.dumps(param.msgParam)
@@ -191,6 +197,17 @@ def publish(client):
     # else:
     #     print(f"Failed to send message to topic {topic}")
  #---------------------------------   
+ 
+    def sendMQTT(topic, msg, QOS):
+        result = client.publish(topic, msg, QOS)
+        status = result[0]
+        if status == 0:
+            print(f"Отправлено сообщение `{msg}` to topic `{topic}`")
+        else:
+            print(f"Failed to send message to topic {topic}")
+        time.sleep(0.5)
+
+
     
     while True:
        
@@ -198,12 +215,17 @@ def publish(client):
         logger.debug('*******проверка temp_on*******')
        
         temp = random.randint(20, 30)
-        tempProc = random.randint(50, 55)
+        tempProc = random.randint(50, 51)
         #temp = 10
+        
+        if __tempProc != tempProc:
+            msg = json.dumps({"tempProc": tempProc})
+            sendMQTT(topicPrc, msg, QOS)
+        __tempProc = tempProc
         
         time.sleep(10)
         msg = {"temperatura": temp, "humidity": 150,
-               "coolState": True, "releState": False, "tempProc": tempProc}
+               "coolState": True, "releState": False}
         
         # ------------------------------
         val = msgSendTime.timeStampMsg(msg)
@@ -221,15 +243,18 @@ def publish(client):
             print(f"connected_flag={client.connected_flag}")
         
             if client.connected_flag:
+               
                 while not q.empty():
                     msg=q.get()
-                    result = client.publish(topic, msg, QOS)
-                    status = result[0]
-                    if status == 0:
-                        print(f"Отправлено сообщение `{msg}` to topic `{topic}`") 
-                    else:
-                        print(f"Failed to send message to topic {topic}")
-                    time.sleep(0.5)
+                    
+                    sendMQTT(topic, msg, QOS)
+                    # result = client.publish(topic, msg, QOS)
+                    # status = result[0]
+                    # if status == 0:
+                    #     print(f"Отправлено сообщение `{msg}` to topic `{topic}`") 
+                    # else:
+                    #     print(f"Failed to send message to topic {topic}")
+                    # time.sleep(0.5)
             else:
                 try:
                     client.reconnect()
