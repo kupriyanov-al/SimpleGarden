@@ -302,6 +302,7 @@ btnParamSend.onclick = function () {
 
 
 var canvas = document.getElementById('myChart');
+
 var myChart = new Chart(canvas, {
   type: 'line',
   data: {
