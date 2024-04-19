@@ -43,8 +43,8 @@ qBuffer = queue.Queue(maxsize=10000)
 # -------------------------
 broker = 'test.mosquitto.org'
 port = 1883
-topic = "raspTest"
-topic_param = "paramTest"
+topic = "rasp1"
+topic_param = "param1"
 topicPrc = 'prc'
 QOS = 1
 # generate client ID with pub prefix randomly
@@ -55,7 +55,7 @@ client_id = f'python-mqtt-{random.randint(0, 100)}'
 class ParamSetup:
     def __init__(self) -> None:
         self._msgParam = {
-            'temp_on': "25",
+            'temp_on': "26",
             'temp_delta': "0.2",
             'timeRele': "21:00",
             'timeReleWork': "30"
@@ -112,10 +112,12 @@ class MsgSendMQTT:
         return True
 
 
-    def sendMqtt(self, client, topic, msg, QOS):
+    def sendMqtt(self, client, topic, msg, QOS, timeMsg=True):
         if self.__compare(msg) != True:
-            now = datetime.datetime.now()
-            msg["datastamp"] = now.strftime('%d.%m.%Y %H:%M:%S')
+            
+            if timeMsg:
+                now = datetime.datetime.now()
+                msg["datastamp"] = now.strftime('%d.%m.%Y %H:%M:%S')
             
             qBuffer.put(json.dumps(msg))
             
@@ -189,12 +191,15 @@ def connect_mqtt() -> mqtt_client:
  
     
     def on_message(client, userdata, message):
-        if message.topic == topic_param:
+         if message.topic == topic_param:
             logger.debug('*******запись в переменные контроллера*******')
-
+            
+            print(param.msgParam)
+            print(json.loads(str(message.payload.decode())))  
+        
             if param.msgParam != json.loads(str(message.payload.decode())):
                 param.msgParam = json.loads(str(message.payload.decode()))
-                paramSend.sendMqtt(client, topic_param, param.msgParam, QOS)
+                paramSend.sendMqtt(client, topic_param, param.msgParam, QOS, False)
 
            
             
@@ -220,7 +225,7 @@ def publish(client):
     CoolProcState = False
     
     # отправляем настройки контроллера всем клиентам
-    paramSend.sendMqtt(client, topic_param, param.msgParam, QOS)
+    paramSend.sendMqtt(client, topic_param, param.msgParam, QOS, False)
     
     while True:
         
@@ -260,7 +265,7 @@ def publish(client):
             GPIO.output(RELE_PIN, ReleState)
            
         
-        temperature = round(DHT['temperature'] /1)*1
+        temperature = round(DHT['temperature'] /0.5)*0.5
         humidity = round(DHT['humidity']/10)*10
         
         msg = {"temperatura": temperature, "humidity": humidity,
