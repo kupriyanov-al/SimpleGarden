@@ -300,7 +300,7 @@ btnParamSend.onclick = function () {
 
 // -----------------------------------
 
-console.log('Availible screen height: ' + screen.availHeight);
+
 
 
 
@@ -360,8 +360,9 @@ var myChart = new Chart(canvas, {
   ]
   },
   options: {
-    responsive: true,
-    maintainAspectRatio: true,
+    responsive: false,
+    maintainAspectRatio: false,
+    
     legend: {
             display: true,},
     title: {
@@ -446,5 +447,9 @@ var myChart = new Chart(canvas, {
 // настройка графика
 if (screen.availWidth < 992) {
   myChart.options.scales.xAxes[0].display=false;
+  // myChart.options.scales.xAxes[0].ticks.maxTicksLimit=1;
+  // myChart.options.scales.xAxes[0].ticks.minRotation=45;
+  myChart.options.scales.yAxes[1].position='left';
   myChart.options.legend.display=false;
+  
 }
