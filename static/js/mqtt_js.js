@@ -262,8 +262,9 @@ function showdata(data, prd) {
     for (let i = 0; i < 2; i++) { // устанавливаем у графика шкалу
       maxValue = Math.max.apply(null, myChart.data.datasets[i].data);
       minValue = Math.min.apply(null, myChart.data.datasets[i].data);
-      myChart.options.scales.yAxes[i].ticks.max = maxValue + 0.1
-      myChart.options.scales.yAxes[i].ticks.min = minValue - 0.1
+      myChart.options.scales.yAxes[i].ticks.max = maxValue + 1
+      myChart.options.scales.yAxes[i].ticks.min = minValue - 1
+      
     }
     
 
@@ -299,11 +300,15 @@ btnParamSend.onclick = function () {
 
 // -----------------------------------
 
+console.log('Availible screen height: ' + screen.availHeight);
+
 
 
 var canvas = document.getElementById('myChart');
 
+
 var myChart = new Chart(canvas, {
+  
   type: 'line',
   data: {
     labels: [],
@@ -356,7 +361,9 @@ var myChart = new Chart(canvas, {
   },
   options: {
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
+    legend: {
+            display: true,},
     title: {
           display: true,
           text: 'Тренды'
@@ -365,8 +372,9 @@ var myChart = new Chart(canvas, {
       xAxes: [{
         display: true,
         scaleLabel: {
-          display: true,
-          labelString: 'Time',
+        display: true,
+        labelString: 'Time',
+
          
         },
         ticks: {
@@ -435,3 +443,8 @@ var myChart = new Chart(canvas, {
 });
 
 // -----------------------------------
+// настройка графика
+if (screen.availWidth < 992) {
+  myChart.options.scales.xAxes[0].display=false;
+  myChart.options.legend.display=false;
+}

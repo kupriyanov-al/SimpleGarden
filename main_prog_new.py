@@ -111,14 +111,6 @@ class MsgSendMQTT:
             return False
         return True
 
-    # def timeStampMsg(self, mesnew):
-
-        if self.__comparemes(mesnew) != True:
-
-            now = datetime.datetime.now()
-            mesnew["datastamp"] = now.strftime('%d.%m.%Y %H:%M:%S')
-            return mesnew
-        return False
 
     def sendMqtt(self, client, topic, msg, QOS):
         if self.__compare(msg) != True:

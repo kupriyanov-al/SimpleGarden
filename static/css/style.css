@@ -128,7 +128,7 @@ a {
 }
 
 .trend {
-    border: 3px solid black;
+    /* border: 3px solid black; */
     height: 100%;
 }
 
@@ -168,6 +168,15 @@ a {
     .nav-pills {
         font-size: small ! important;
         display: block;
+    }
+
+    .user {
+       display: none; 
+    }
+    .navbar-toggler-icon {
+        display: block; 
+        font-size: 25px;
+        border: #3d464d 1;
     }
 
     /* canvas {
