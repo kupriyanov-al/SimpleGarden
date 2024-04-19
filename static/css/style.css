@@ -92,6 +92,8 @@ a {
 .dropdown a:hover {
     color: var(--bg-color);
     background-color: #6c757d;
+    /* background-color: rgba(red, green, blue, alpha) */
+    background-color: #c100fc;
 }
 .btmd {
 

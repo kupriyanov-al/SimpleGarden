@@ -8,9 +8,9 @@ let temperatura = 0;
 let humidity = 0;
 let datastamp="";
 let clientId = makeid(5);
-let topic_param = "paramTest";
-let topic_prc = "prc";
-let topic = "raspTest"
+let topic_param = "paramT";
+let topic_prc = "prcT";
+let topic = "raspT"
 
 
 var btnQuery = document.getElementById('btnQuery');
@@ -316,6 +316,7 @@ var myChart = new Chart(canvas, {
       label: "Температура",
       borderColor: "#3e95cd",
       backgroundColor: "#7bb6dd",
+      
       fill: false,
       tension: 0.3,
       data: [],
@@ -339,8 +340,10 @@ var myChart = new Chart(canvas, {
         data: [],
         steppedLine: true,
         label: "Вентилятор",
-        borderColor: "#fc1d42",
-        backgroundColor: "#71d1bd",
+        borderColor: "#c100fc",
+        // backgroundColor: "#71d1bd",
+        backgroundColor: "#08fae683",
+        
         fill: false,
         
         //       // maxTicksLimit: 10,
@@ -351,9 +354,9 @@ var myChart = new Chart(canvas, {
         data: [],
         steppedLine: true,
         label: "Освещение",
-        borderColor: "#0eec51",
-        backgroundColor: "#71d1bd",
-        fill: false,
+        borderColor: "#f2f55b88",
+        backgroundColor: "#f2f55b88",
+        fill: true,
         //       // maxTicksLimit: 10,
 
       },

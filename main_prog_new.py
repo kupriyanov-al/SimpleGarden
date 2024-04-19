@@ -43,9 +43,9 @@ qBuffer = queue.Queue(maxsize=10000)
 # -------------------------
 broker = 'test.mosquitto.org'
 port = 1883
-topic = "rasp1"
-topic_param = "param1"
-topicPrc = 'prc'
+topic = "raspT"
+topic_param = "paramT"
+topicPrc = 'prcT'
 QOS = 1
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
