@@ -43,9 +43,9 @@ qBuffer = queue.Queue(maxsize=10000)
 # -------------------------
 broker = 'test.mosquitto.org'
 port = 1883
-topic = "raspT"
-topic_param = "paramT"
-topicPrc = 'prcT'
+topic = "rasp1"
+topic_param = "param1"
+topicPrc = 'prc'
 QOS = 1
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
@@ -58,7 +58,7 @@ class ParamSetup:
             'temp_on': "26",
             'temp_delta': "0.2",
             'timeRele': "21:00",
-            'timeReleWork': "1" #в часах
+            'timeReleWork': "1"
         }
 
     @property
@@ -112,6 +112,14 @@ class MsgSendMQTT:
             return False
         return True
 
+    # def timeStampMsg(self, mesnew):
+
+        if self.__comparemes(mesnew) != True:
+
+            now = datetime.datetime.now()
+            mesnew["datastamp"] = now.strftime('%d.%m.%Y %H:%M:%S')
+            return mesnew
+        return False
 
     def sendMqtt(self, client, topic, msg, QOS, timeMsg=True):
         if self.__compare(msg) != True or self.__counter == 100:
@@ -140,6 +148,8 @@ class MsgSendMQTT:
         
         else:
             self.__counter += 1
+    
+
 
 
 # температура процессора
@@ -245,6 +255,7 @@ def publish(client):
         temp_delta = float(param.msgParam['temp_delta'])
         timeRele = param.msgParam['timeRele']
         timeReleWork = float(param.msgParam['timeReleWork']) *60 *60  #в часах
+        
         
 
         DHT = get_temp_hum()
