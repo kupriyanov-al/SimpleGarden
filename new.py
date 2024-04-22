@@ -66,15 +66,18 @@ class ValueRandomGen:
 
     def humidity(self, min, max):
         self.__humidity = random.randint(min, max)
-        return self.__humidity
+        return 50
+        # return self.__humidity
     
     def releState(self):
         self.__releState =  bool(random.getrandbits(1))
-        return self.__releState
+        return False
+        # return self.__releState
     
     def coolState(self):
         self.__coolState = bool(random.getrandbits(1))
-        return self.__coolState
+        # return self.__coolState
+        return False
     
     def tempProc(self, min, max):
         self.__tempProc = random.randint(min, max)
@@ -84,6 +87,7 @@ class ValueRandomGen:
 class MsgSendMQTT:
     def __init__(self) -> None:
         self._mesOld = {}
+        self.__counter = 0
 
     def __compare(self, mesnew):
         if self._mesOld != mesnew:
@@ -94,7 +98,9 @@ class MsgSendMQTT:
 
 
     def sendMqtt(self, client, topic, msg, QOS):
-        if self.__compare(msg) != True:
+        print(self.__counter)
+        if self.__compare(msg) != True or self.__counter == 10:
+            self.__counter = 0
             now = datetime.datetime.now()
             msg["datastamp"] = now.strftime('%d.%m.%Y %H:%M:%S')
             
@@ -115,7 +121,8 @@ class MsgSendMQTT:
                     print("reconnect error...")
                 except:
                     print("reconnect error...")
-        
+        else:
+            self.__counter += 1
     
 param = ParamSetup()
 valTestGen=ValueRandomGen()
@@ -183,7 +190,7 @@ def publish(client):
     while True:
         
         # сгенерированные случайные данные
-        temperature = valTestGen.temperature(20, 30)
+        temperature = valTestGen.temperature(20, 22)
         humidity = valTestGen.humidity(60, 100)
         releState = valTestGen.releState()
         coolState = valTestGen.coolState()

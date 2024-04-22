@@ -58,7 +58,7 @@ class ParamSetup:
             'temp_on': "26",
             'temp_delta': "0.2",
             'timeRele': "21:00",
-            'timeReleWork': "30"
+            'timeReleWork': "1" #в часах
         }
 
     @property
@@ -104,6 +104,7 @@ class ValueRandomGen:
 class MsgSendMQTT:
     def __init__(self) -> None:
         self._mesOld = {}
+        self.__counter = 0
 
     def __compare(self, mesnew):
         if self._mesOld != mesnew:
@@ -113,8 +114,8 @@ class MsgSendMQTT:
 
 
     def sendMqtt(self, client, topic, msg, QOS, timeMsg=True):
-        if self.__compare(msg) != True:
-            
+        if self.__compare(msg) != True or self.__counter == 100:
+            self.__counter = 0
             if timeMsg:
                 now = datetime.datetime.now()
                 msg["datastamp"] = now.strftime('%d.%m.%Y %H:%M:%S')
@@ -137,7 +138,8 @@ class MsgSendMQTT:
                 except:
                     print("reconnect error...")
         
-
+        else:
+            self.__counter += 1
 
 
 # температура процессора
@@ -242,7 +244,7 @@ def publish(client):
         temp_on = float(param.msgParam['temp_on'])
         temp_delta = float(param.msgParam['temp_delta'])
         timeRele = param.msgParam['timeRele']
-        timeReleWork = float(param.msgParam['timeReleWork'])
+        timeReleWork = float(param.msgParam['timeReleWork']) *60 *60  #в часах
         
 
         DHT = get_temp_hum()
