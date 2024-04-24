@@ -13,6 +13,9 @@ from re import findall
 # Импортируем библиотеку по работе с внешними процессами
 from subprocess import check_output
 
+import statistics
+import collections
+
 
 # === Инициализация пинов ===
 logger.debug('******START******')
@@ -167,9 +170,18 @@ def get_temp():
 def get_temp_hum():
     humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
     if humidity is not None and temperature is not None:
-        if (0 < humidity < 100) and (0 < humidity < 100):
-            temperature = round(temperature, 2)
-            humidity = round(humidity, 1)
+        if (0 <= humidity < 100) and (0 <= temperature < 100):
+            # temperature = round(temperature, 2)
+            # humidity = round(humidity, 1)
+            temperature = int(temperature)
+            humidity = int(humidity)
+            
+            # среднее арифм
+            qTempetature.append(temperature)
+            temperature = statistics.mean(list(qTempetature)) # средня температура за период
+            
+            
+            
             DHT = {'humidity': humidity, 'temperature': temperature}
             return DHT
     return False
@@ -237,7 +249,7 @@ def publish(client):
     CoolProcState = False
     
     # отправляем настройки контроллера всем клиентам
-    paramSend.sendMqtt(client, topic_param, param.msgParam, QOS, False)
+    # paramSend.sendMqtt(client, topic_param, param.msgParam, QOS, False)
     
     while True:
         
@@ -278,8 +290,9 @@ def publish(client):
             GPIO.output(RELE_PIN, ReleState)
            
         
-        temperature = round(DHT['temperature'] /0.5)*0.5
+        temperature = round(DHT['temperature'] /1)*1
         humidity = round(DHT['humidity']/10)*10
+        
         
         msg = {"temperatura": temperature, "humidity": humidity,
                "coolState": CoolState, "releState": ReleState}
@@ -295,6 +308,7 @@ valTestGen = ValueRandomGen()
 msgMqtt = MsgSendMQTT()
 msgProcMqtt = MsgSendMQTT()
 paramSend = MsgSendMQTT()
+qTempetature = collections.deque(maxlen=30) # очередь средней температуры
 
 def run():
     client = connect_mqtt()
