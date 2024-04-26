@@ -147,7 +147,7 @@ class MsgSendMQTT:
                     client.reconnect()
                     print("reconnect error...")
                 except:
-                    print("reconnect error...")
+                    print("error...")
         
         else:
             self.__counter += 1
@@ -266,7 +266,7 @@ def publish(client):
         temp_on = float(param.msgParam['temp_on'])
         temp_delta = float(param.msgParam['temp_delta'])
         timeRele = param.msgParam['timeRele']
-        timeReleWork = float(param.msgParam['timeReleWork']) *60 *60  #в часах
+        timeReleWork = int(param.msgParam['timeReleWork']) *60 *60  #в часах
         
         
 

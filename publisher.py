@@ -82,6 +82,9 @@ class ValueRandomGen:
         return self.__tempProc
 
 
+
+
+
 class MsgSendMQTT:
     def __init__(self) -> None:
         self._mesOld = {}
@@ -92,6 +95,10 @@ class MsgSendMQTT:
             self._mesOld = mesnew.copy()
             return False
         return True
+
+
+
+
 
     def sendMqtt(self, client, topic, msg, QOS):
         print(self.__counter)
@@ -178,6 +185,14 @@ def connect_mqtt() -> mqtt_client:
 
     return client
 
+def median(xs):
+    '''Медиана числового ряда'''
+    n = len(xs)
+    mid = n // 2
+    if n % 2 == 1:
+        return sorted(xs)[mid]
+    else:
+        return statistics.mean(sorted(xs)[mid-1:][:2])
 
 def publish(client):
     # отправляем настройки контроллера всем клиентам
@@ -192,12 +207,18 @@ def publish(client):
         coolState = valTestGen.coolState()
         tempProc = valTestGen.tempProc(30, 40)
         
+        # print(f"до round tempProc - {tempProc}")
+        # tempProc = round(tempProc/2)*2
+        # print(f"после round tempProc - {tempProc}")
         
+
         # среднее арифм
         dq.append(temperature)
         print(f"очередь - {list(dq)}")
-        res_mean = statistics.mean(list(dq))
-        print(f"среднее арифм - {res_mean}")
+        res_mean = median(list(dq))
+        # res_mean = statistics.mean(list(dq)) спеднее арифм
+       
+        print(f"медиана - {res_mean}")
 
 
         
