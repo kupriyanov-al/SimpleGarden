@@ -247,6 +247,8 @@ def publish(client):
     ReleState = False
     CoolState = False
     CoolProcState = False
+    RainState = False
+    countIter = 0
     
     # отправляем настройки контроллера всем клиентам
     # paramSend.sendMqtt(client, topic_param, param.msgParam, QOS, False)
@@ -299,6 +301,12 @@ def publish(client):
         
         msgMqtt.sendMqtt(client, topic, msg, QOS)
         
+        # включение полива периодически 1 раз в 3ч (10800 сек) на 15 (900 cek) мин
+        if countIter == 1080 and RainState == False or countIter == 90 and RainState == True:
+            RainState = not RainState
+            GPIO.output(RELE_PIN_RAIN, RainState)
+            countIter = 0
+        countIter += 1
         
         time.sleep(10)
 
