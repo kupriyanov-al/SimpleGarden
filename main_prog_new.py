@@ -60,7 +60,7 @@ class ParamSetup:
         self._msgParam = {
             'temp_on': "26",
             'temp_delta': "0.2",
-            'timeRele': "21:00",
+            'timeRele': "23:00",
             'timeReleWork': "1"
         }
 
@@ -125,6 +125,7 @@ class MsgSendMQTT:
         return False
 
     def sendMqtt(self, client, topic, msg, QOS, timeMsg=True):
+        # print(f"counter-{self.__counter}")
         if self.__compare(msg) != True or self.__counter == 100:
             self.__counter = 0
             if timeMsg:
@@ -147,7 +148,7 @@ class MsgSendMQTT:
                     client.reconnect()
                     print("reconnect error...")
                 except:
-                    print("error...")
+                    print("reconnect error...")
         
         else:
             self.__counter += 1
@@ -178,8 +179,9 @@ def get_temp_hum():
             
             # среднее арифм
             qTempetature.append(temperature)
+            qHumidity.append(humidity)
             temperature = statistics.mean(list(qTempetature)) # средня температура за период
-            
+            humidity = statistics.mean(list(qHumidity))
             
             
             DHT = {'humidity': humidity, 'temperature': temperature}
@@ -262,13 +264,14 @@ def publish(client):
             # Задаем новый статус пину управления
             GPIO.output(COOL_PROC_PIN, CoolProcState)
         
+#         tempProc = round(DHT['tempProc']/2)*2
         msgTempProc = {"tempProc": tempProc}
         msgProcMqtt.sendMqtt(client, topicPrc, msgTempProc, QOS)
         
         temp_on = float(param.msgParam['temp_on'])
         temp_delta = float(param.msgParam['temp_delta'])
         timeRele = param.msgParam['timeRele']
-        timeReleWork = int(param.msgParam['timeReleWork']) *60 *60  #в часах
+        timeReleWork = float(param.msgParam['timeReleWork']) *60 *60  #в часах
         
         
 
@@ -301,13 +304,14 @@ def publish(client):
         
         msgMqtt.sendMqtt(client, topic, msg, QOS)
         
-        # включение полива периодически 1 раз в 3ч (10800 сек) на 15 (900 cek) мин
+        
+                # включение полива периодически 1 раз в 3ч (10800 сек) на 15 (900 cek) мин
         if countIter == 1080 and RainState == False or countIter == 90 and RainState == True:
             RainState = not RainState
             GPIO.output(RELE_PIN_RAIN, RainState)
             countIter = 0
-        countIter += 1
-        
+        countIter += 1  
+        print(f"counter rain-{countIter}")
         time.sleep(10)
 
 
@@ -316,7 +320,8 @@ valTestGen = ValueRandomGen()
 msgMqtt = MsgSendMQTT()
 msgProcMqtt = MsgSendMQTT()
 paramSend = MsgSendMQTT()
-qTempetature = collections.deque(maxlen=30) # очередь средней температуры
+qTempetature = collections.deque(maxlen=10) # очередь средней температуры
+qHumidity = collections.deque(maxlen=10) # очередь средней влажности
 
 def run():
     client = connect_mqtt()
