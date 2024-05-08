@@ -69,13 +69,13 @@ class ValueRandomGen:
 
     def releState(self):
         self.__releState = bool(random.getrandbits(1))
-        return False
-        # return self.__releState
+        #return False
+        return self.__releState
 
     def coolState(self):
         self.__coolState = bool(random.getrandbits(1))
-        # return self.__coolState
-        return False
+        return self.__coolState
+        #return False
 
     def tempProc(self, min, max):
         self.__tempProc = random.randint(min, max)
@@ -220,11 +220,8 @@ def publish(client):
        
         print(f"медиана - {res_mean}")
 
-
-        
-
         msg = {"temperatura": temperature, "humidity": humidity,
-               "coolState": releState, "releState": coolState}
+               "coolState": releState, "releState": coolState, "rainState": coolState}
 
         msgTempProc = {"tempProc": tempProc}
 

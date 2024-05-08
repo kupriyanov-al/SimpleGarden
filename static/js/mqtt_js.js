@@ -111,17 +111,20 @@ else
   humidity = mes['humidity'];
   coolState = mes['coolState'];
   releState = mes['releState']; 
+  rainState = mes['rainState']; 
   datastamp = mes['datastamp'];
 
 
   coolState_onoff=(coolState==true)?'ON':'OFF';
   releState_onoff=(releState==true)?'ON':'OFF';
+  rainState_onoff=(rainState==true)?'ON':'OFF';
 
   // document.querySelector(".submsg").innerHTML = temperatura; 
   document.getElementById("temperature").innerHTML = temperatura; 
   document.getElementById("humidity").innerHTML = humidity;
   document.getElementById("coolState").innerHTML = coolState_onoff;
   document.getElementById("releState").innerHTML = releState_onoff;
+  document.getElementById("rainState").innerHTML = rainState_onoff;
   document.getElementById("datastamp").innerHTML = datastamp;
   
   let data=[];
@@ -247,6 +250,7 @@ function showdata(data, prd) {
     myChart.data.datasets[1].data.push(r.humidity);
     myChart.data.datasets[2].data.push(r.coolState);
     myChart.data.datasets[3].data.push(r.releState);
+    myChart.data.datasets[4].data.push(r.rainState);
     
     // если в режиме мониторинга то удаляем из графика данные больше 100
     if (prd){    
@@ -360,6 +364,17 @@ var myChart = new Chart(canvas, {
         //       // maxTicksLimit: 10,
 
       },
+      {
+        yAxisID: 'E',
+        data: [],
+        steppedLine: true,
+        label: "Полив",
+        borderColor: "#f2f55b88",
+        backgroundColor: "#f2f55b88",
+        fill: true,
+        //       // maxTicksLimit: 10,
+
+      },
   ]
   },
   options: {
@@ -440,7 +455,18 @@ var myChart = new Chart(canvas, {
           beginAtZero: true
         },
         stepped: true,
-      }
+      },
+      {
+        id: 'E',
+        type: 'linear',
+        display: false,
+        ticks: {
+          max: 2,
+          min: 0,
+          beginAtZero: true
+        },
+        stepped: true,
+      },
     ]
     }
   }
