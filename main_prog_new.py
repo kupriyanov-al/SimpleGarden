@@ -140,9 +140,11 @@ class MsgSendMQTT:
                     result = client.publish(topic, msg, QOS, retain=True)
                     status = result[0]
                     if status == 0:
-                        print(f"Отправлено сообщение `{msg}` to topic `{topic}`")
+                        logger.debug(f"Отправлено сообщение `{msg}` to topic `{topic}`")
+                      
                     else:
-                        print(f"Failed to send message to topic {topic}")
+                        logger.debug(f"Failed to send message to topic {topic}")
+                        
             else:
                 try:
                     client.reconnect()
