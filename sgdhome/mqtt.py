@@ -6,7 +6,7 @@ import json
 
 broker_url = "test.mosquitto.org"
 broker_port = 1883
-topic = "raspTest"
+topic = "raspT"
 
 def on_connect(client, userdata, flags, rc):
    print(f"Соединение с сервером mqtt: {broker_url}")
@@ -38,7 +38,7 @@ def on_message(client, userdata, message):
 #    print(rec)
    
    RecDB.record(rec['datastamp'], rec['temperatura'],
-                rec['humidity'], rec['coolState'], rec['releState'])
+                rec['humidity'], rec['coolState'], rec['releState'], rec['rainState'])
    
    
    

@@ -8,6 +8,6 @@ from .models import DBTelemetry
 @admin.register(DBTelemetry)
 class DBTelemetryAdmin(admin.ModelAdmin):
     list_display = ('datastamp', 'temperatura',
-                    'humidity', 'coolState', 'releState')
+                    'humidity', 'coolState', 'releState', 'rainState')
     # поиск
     search_fields = ('datastamp',)

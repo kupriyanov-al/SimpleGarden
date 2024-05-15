@@ -240,7 +240,8 @@ function showdata(data, prd) {
     temp += "<td>" + r.temperatura + "</td>";
     temp += "<td>" + r.humidity + "</td>";
     temp += "<td>" + r.coolState + "</td>";
-    temp += "<td>" + r.releState + "</td></tr>";
+    temp += "<td>" + r.releState + "</td>";
+    temp += "<td>" + r.rainState + "</td></tr>";
 
     document.getElementById('data_tbl').innerHTML = temp;
 

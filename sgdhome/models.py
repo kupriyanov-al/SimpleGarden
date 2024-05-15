@@ -11,6 +11,7 @@ class DBTelemetry( models.Model):
         'Влажность', null=True , max_digits=4, decimal_places=1)
     coolState = models.BooleanField('Вентилятор')
     releState = models.BooleanField('Освещение')
+    rainState = models.BooleanField('Полив')
     
     def __str__(self):
         return (f"datastamp={self.datastamp}. temperatura= {self.temperatura}.humidity ={self.humidity} coolState = {self.coolState} releState = {self.releState}")

@@ -9,7 +9,8 @@ class DBTelemetrySerializer(serializers.ModelSerializer):
     humidity = serializers.DecimalField(max_digits=4, decimal_places=1)
     coolState = serializers.BooleanField()
     releState = serializers.BooleanField()
+    rainState = serializers.BooleanField()
     class Meta:
         model = DBTelemetry
         fields = ('datastamp', 'temperatura',
-                  'humidity', 'coolState', 'releState')
+                  'humidity', 'coolState', 'releState', 'rainState')
