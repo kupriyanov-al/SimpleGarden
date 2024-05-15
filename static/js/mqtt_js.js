@@ -370,8 +370,8 @@ var myChart = new Chart(canvas, {
         data: [],
         steppedLine: true,
         label: "Полив",
-        borderColor: "#f2f55b88",
-        backgroundColor: "#f2f55b88",
+        borderColor: "#5bf5f588",
+        backgroundColor: "#5bf5f588",
         fill: true,
         //       // maxTicksLimit: 10,
 
