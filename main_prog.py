@@ -38,6 +38,7 @@ GPIO.setup(COOL_PROC_PIN, GPIO.OUT, initial=0)
 GPIO.setup(RELE_PIN_RAIN, GPIO.OUT, initial=0)
 
 
+
 # Буффер
 qBuffer = queue.Queue(maxsize=10000)
 
@@ -45,8 +46,8 @@ qBuffer = queue.Queue(maxsize=10000)
 # -------------------------
 broker = 'test.mosquitto.org'
 port = 1883
-topic = "rasp1"
-topic_param = "param1"
+topic = "rasp"
+topic_param = "param"
 topicPrc = 'prc'
 QOS = 1
 # generate client ID with pub prefix randomly
@@ -59,7 +60,7 @@ class ParamSetup:
         self._msgParam = {
             'temp_on': "26",
             'temp_delta': "0.2",
-            'timeRele': "23:00",
+            'timeRele': "04:00",
             'timeReleWork': "1"
         }
 
@@ -72,6 +73,7 @@ class ParamSetup:
         self._msgParam = x
 
 
+
 class ValueRandomGen:
     # генератор случайных чисел
     def __init__(self) -> None:
@@ -81,27 +83,27 @@ class ValueRandomGen:
         self.__coolState = False
         self.__tempProc = False
 
-    def temperature(self, min, max):
+    def temperature(self,min,max):
         self.__temperature = random.randint(min, max)
         return self.__temperature
 
     def humidity(self, min, max):
         self.__humidity = random.randint(min, max)
         return self.__humidity
-
+    
     def releState(self):
-        self.__releState = bool(random.getrandbits(1))
+        self.__releState =  bool(random.getrandbits(1))
         return self.__releState
-
+    
     def coolState(self):
         self.__coolState = bool(random.getrandbits(1))
         return self.__coolState
-
+    
     def tempProc(self, min, max):
         self.__tempProc = random.randint(min, max)
         return self.__tempProc
-
-
+    
+ 
 class MsgSendMQTT:
     def __init__(self) -> None:
         self._mesOld = {}
@@ -129,31 +131,29 @@ class MsgSendMQTT:
             if timeMsg:
                 now = datetime.datetime.now()
                 msg["datastamp"] = now.strftime('%d.%m.%Y %H:%M:%S')
-
+            
             qBuffer.put(json.dumps(msg))
-
+            
             if client.connected_flag:
                 while not qBuffer.empty():
                     msg = qBuffer.get()
                     result = client.publish(topic, msg, QOS, retain=True)
                     status = result[0]
                     if status == 0:
-                        logger.debug(
-                            f"Отправлено сообщение `{msg}` to topic `{topic}`")
-
+                        print(f"Отправлено сообщение `{msg}` to topic `{topic}`")
                     else:
-                        logger.debug(
-                            f"Failed to send message to topic {topic}")
-
+                        print(f"Failed to send message to topic {topic}")
             else:
                 try:
                     client.reconnect()
                     print("reconnect error...")
                 except:
                     print("reconnect error...")
-
+        
         else:
             self.__counter += 1
+    
+
 
 
 # температура процессора
@@ -176,24 +176,24 @@ def get_temp_hum():
             # humidity = round(humidity, 1)
             temperature = int(temperature)
             humidity = int(humidity)
-
+            
             # среднее арифм
             qTempetature.append(temperature)
             qHumidity.append(humidity)
-            # средня температура за период
-            temperature = statistics.mean(list(qTempetature))
+            temperature = statistics.mean(list(qTempetature)) # средня температура за период
             humidity = statistics.mean(list(qHumidity))
-
+            
+            
             DHT = {'humidity': humidity, 'temperature': temperature}
             return DHT
     return False
 
 
 def connect_mqtt() -> mqtt_client:
-
+    
     def on_connect(client, userdata, flags, rc):
         print(f"on_connect flags={flags} , rc={rc}")
-
+        
         if rc == 0:
             print("Connected to MQTT Broker!")
             client.connected_flag = True
@@ -203,7 +203,7 @@ def connect_mqtt() -> mqtt_client:
 
     def on_publish(client, userdata, mid):
         print(f"on_publish mid={mid}")
-
+         
     def on_disconnect(client, userdata, rc):
         client.connected_flag = False
         if rc != 0:
@@ -214,61 +214,66 @@ def connect_mqtt() -> mqtt_client:
               print("Disconnected")
         else:
             print("Disconnected successfully")
-
+ 
+    
     def on_message(client, userdata, message):
-        if message.topic == topic_param:
+         if message.topic == topic_param:
             logger.debug('*******запись в переменные контроллера*******')
-
+            
             print(param.msgParam)
-            print(json.loads(str(message.payload.decode())))
-
+            print(json.loads(str(message.payload.decode())))  
+        
             if param.msgParam != json.loads(str(message.payload.decode())):
                 param.msgParam = json.loads(str(message.payload.decode()))
-                paramSend.sendMqtt(client, topic_param,
-                                   param.msgParam, QOS, False)
+                paramSend.sendMqtt(client, topic_param, param.msgParam, QOS, False)
 
+           
+            
+            
+  
     client = mqtt_client.Client(client_id, clean_session=False)
 
     client.connected_flag = True
-
+    
     client.on_connect = on_connect
     client.on_publish = on_publish
     client.on_disconnect = on_disconnect
     client.on_message = on_message
-    client.connect(broker, port)  #
-
+    client.connect(broker, port)  # 
+    
     return client
 
 
 def publish(client):
-
+    
     ReleState = False
     CoolState = False
     CoolProcState = False
     RainState = False
     countIter = 0
-
+    
     # отправляем настройки контроллера всем клиентам
     # paramSend.sendMqtt(client, topic_param, param.msgParam, QOS, False)
-
+    
     while True:
-
+        
         tempProc = get_temp()  # температура процессора
-
+        
         if tempProc > onTempProceccor and not CoolProcState or tempProc < onTempProceccor - 5 and CoolProcState:
             CoolProcState = not CoolProcState         # Меняем статус состояния
             # Задаем новый статус пину управления
             GPIO.output(COOL_PROC_PIN, CoolProcState)
-
+        
 #         tempProc = round(DHT['tempProc']/2)*2
         msgTempProc = {"tempProc": tempProc}
         msgProcMqtt.sendMqtt(client, topicPrc, msgTempProc, QOS)
-
+        
         temp_on = float(param.msgParam['temp_on'])
         temp_delta = float(param.msgParam['temp_delta'])
         timeRele = param.msgParam['timeRele']
-        timeReleWork = float(
-            param.msgParam['timeReleWork']) * 60 * 60  # в часах
+        timeReleWork = float(param.msgParam['timeReleWork']) *60 *60  #в часах
+        
+        
 
         DHT = get_temp_hum()
         if DHT == False:
@@ -278,8 +283,8 @@ def publish(client):
             CoolState = not CoolState
             GPIO.output(COOL_PIN, CoolState)
 
-        # преобразование времени в объект
-        time_obj = time.strptime(timeRele, "%H:%M")
+        
+        time_obj = time.strptime(timeRele, "%H:%M")  # преобразование времени в объект
 
         now = datetime.datetime.now()
         todayon = now.replace(hour=time_obj.tm_hour,
@@ -288,22 +293,33 @@ def publish(client):
         if now >= todayon and seconds < timeReleWork and not ReleState or now > todayon and seconds > timeReleWork and ReleState:
             ReleState = not ReleState
             GPIO.output(RELE_PIN, ReleState)
-
-        temperature = round(DHT['temperature'] / 1)*1
+           
+        
+        temperature = round(DHT['temperature'] /1)*1
         humidity = round(DHT['humidity']/10)*10
-
-        msg = {"temperatura": temperature, "humidity": humidity,
-               "coolState": CoolState, "releState": ReleState}
-
-        msgMqtt.sendMqtt(client, topic, msg, QOS)
-
-        # включение полива периодически 1 раз в 3ч (10800 сек) на 15 (900 cek) мин
-        if countIter == 1080 and RainState == False or countIter == 90 and RainState == True:
+        
+        
+        
+        
+        
+                # включение полива периодически 1 раз в 3ч (10800 сек) на 15 (900 cek) мин
+#         if countIter == 1080 and RainState == False or countIter == 90 and RainState == True:
+        if countIter == 10800 and RainState == False or countIter == 10 and RainState == True:
+        
             RainState = not RainState
             GPIO.output(RELE_PIN_RAIN, RainState)
             countIter = 0
-        countIter += 1
+        countIter += 1  
+        
+        msg = {"temperatura": temperature, "humidity": humidity,
+               "coolState": CoolState, "releState": ReleState, "rainState": RainState}
+        
+        msgMqtt.sendMqtt(client, topic, msg, QOS)
+        
         print(f"counter rain-{countIter}")
+        
+        
+        
         time.sleep(10)
 
 
@@ -312,9 +328,8 @@ valTestGen = ValueRandomGen()
 msgMqtt = MsgSendMQTT()
 msgProcMqtt = MsgSendMQTT()
 paramSend = MsgSendMQTT()
-qTempetature = collections.deque(maxlen=10)  # очередь средней температуры
-qHumidity = collections.deque(maxlen=10)  # очередь средней влажности
-
+qTempetature = collections.deque(maxlen=10) # очередь средней температуры
+qHumidity = collections.deque(maxlen=10) # очередь средней влажности
 
 def run():
     client = connect_mqtt()
@@ -325,7 +340,9 @@ def run():
         publish(client)
     except Exception as err:
         print(f"Error loop_start: {err}")
+    
 
 
 if __name__ == '__main__':
     run()
+    
