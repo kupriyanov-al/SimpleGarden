@@ -123,6 +123,10 @@ a {
     /* color: red;  */
 }
 
+.card-header-s {
+        display: none;
+    }
+
 .subtitle {
     font-size: 18px;
     color: #d1d6da ;
@@ -139,11 +143,17 @@ a {
 @media (max-width: 992px)  { 
     .card{
        margin-right: 15px;
-       
+       /* display: none; */
     }
     .card-header {
         font-size: small;
+        display: none;
     }
+    .card-header-s {
+        font-size: small;
+        display: block;
+    }
+
 
     .card-title {
          color: var(--text-color);
